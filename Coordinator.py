@@ -27,8 +27,8 @@ def setConstants(app):
     app.optionShortLineArrowLength = 15
     app.arrowThickness = 2
     app.pcColor = 'Black'
-    app.eArrowColor = 'Blue'
-    app.bArrowColor = 'Dark Green'
+    app.eArrowColor = 'Dark Blue'
+    app.bArrowColor = 'Dark Red'
     
     app.askCX = (app.width - app.optionsDrawingWidth) // 2
     app.askCY = app.height // 2
@@ -36,7 +36,7 @@ def setConstants(app):
     app.askHeight = 250
     app.askSubmitXs = (app.askCX + 30, app.askCX + 120)
     app.askSubmitYs = (app.askCY + 10, app.askCY + 50)
-    app.inOutSymbolMargin = 5
+    app.inOutSymbolMargin = 10
 
 def appStarted(app):
     setConstants(app)
@@ -495,7 +495,9 @@ def drawPointCharges(app, canvas):
         canvas.create_text(currentPointCharge.cx, currentPointCharge.cy,
                 text = currentPointCharge.charge, fill = 'white')
 
-def drawFieldItem(app, canvas, x0, y0, x1, y1, direction):
+def drawFieldItem(app, canvas, x0, y0, x1, y1, direction, color):
+    angle = math.pi / 4
+    errorShift = 2
     if direction == 'I':
         crossMargin = 8
         canvas.create_line(x0 + crossMargin, y0 + crossMargin, 
@@ -506,11 +508,38 @@ def drawFieldItem(app, canvas, x0, y0, x1, y1, direction):
         cx = (x0 + x1) // 2
         cy = (y0 + y1) // 2
         canvas.create_oval(cx - 2, cy - 2, cx + 2, cy + 2, fill = 'white')
+    elif direction == 'R':
+        x0Arrow = x1 - app.optionShortLineArrowLength * math.cos(angle)
+        yAArrow = y1 - app.optionShortLineArrowLength * math.sin(angle)
+        yBArrow = y1 + app.optionShortLineArrowLength * math.sin(angle)
+        canvas.create_line(x0Arrow, yAArrow, x1, y1, x0Arrow, yBArrow, 
+                fill = color)
+    elif direction == 'L':
+        x0 += errorShift
+        x1Arrow = x0 + app.optionShortLineArrowLength * math.cos(angle)
+        yAArrow = y1 - app.optionShortLineArrowLength * math.sin(angle)
+        yBArrow = y1 + app.optionShortLineArrowLength * math.sin(angle)
+        canvas.create_line(x1Arrow, yAArrow, x0, y0, x1Arrow, yBArrow, 
+                fill = color)
+    elif direction == 'U':
+        y0 += errorShift
+        xAArrow = x0 - app.optionShortLineArrowLength * math.cos(angle)
+        xBArrow = x0 + app.optionShortLineArrowLength * math.cos(angle)
+        y1Arrow = y0 + app.optionShortLineArrowLength * math.sin(angle)
+        canvas.create_line(xAArrow, y1Arrow, x0, y0, xBArrow, y1Arrow, 
+                fill = color)
+    elif direction == 'D':
+        y1 -= errorShift
+        xAArrow = x1 - app.optionShortLineArrowLength * math.cos(angle)
+        xBArrow = x1 + app.optionShortLineArrowLength * math.cos(angle)
+        y1Arrow = y1 - app.optionShortLineArrowLength * math.sin(angle)
+        canvas.create_line(xAArrow, y1Arrow, x1, y1, xBArrow, y1Arrow, 
+                fill = color)
 
 def drawFields(app, canvas, fieldType):
     width = app.width - app.userOptionsWidth
     fieldList = app.allEFields if fieldType == 'E' else app.allBFields
-    color = 'dark blue' if fieldType == 'E' else 'dark red'
+    color = app.eArrowColor if fieldType == 'E' else app.bArrowColor
     for currentField in fieldList:
         currentListOfLocations = Calculations.getFieldLocations(
                 width, app.height, fieldType, currentField.direction)
@@ -523,12 +552,13 @@ def drawFields(app, canvas, fieldType):
                 drawFieldItem(app, canvas, x0 + app.inOutSymbolMargin, 
                         y0 + app.inOutSymbolMargin, 
                         x1 - app.inOutSymbolMargin, 
-                        y1 - app.inOutSymbolMargin, currentField.direction)
+                        y1 - app.inOutSymbolMargin, currentField.direction, 
+                        None)
             else:
                 canvas.create_line(x0, y0, x1, y1, fill = color,
                         width = app.arrowThickness)
                 drawFieldItem(app, canvas, x0, y0, x1, y1, 
-                        currentField.direction)
+                        currentField.direction, color)
 
 def drawDraggingObject(app, canvas):
     if app.draggingPC != None:
