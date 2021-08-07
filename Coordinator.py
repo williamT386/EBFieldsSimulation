@@ -1,4 +1,4 @@
-import PointChargeClass, EFieldClass, BFieldClass
+import PointChargeClass, EFieldClass, BFieldClass, Calculations
 import math
 from cmu_112_graphics import *
 
@@ -36,6 +36,7 @@ def setConstants(app):
     app.askHeight = 250
     app.askSubmitXs = (app.askCX + 30, app.askCX + 120)
     app.askSubmitYs = (app.askCY + 10, app.askCY + 50)
+    app.inOutSymbolMargin = 5
 
 def appStarted(app):
     setConstants(app)
@@ -252,6 +253,7 @@ def addPC(app, event):
     app.draggingPCOption = False
     app.draggingPC = None
 
+# TODO: create cancel effect when U and D fields are created of same field type
 def mouseReleased(app, event):
     if app.draggingPC != None:
         addPC(app, event)
@@ -273,6 +275,8 @@ def setErrorMessage(app, message):
 def redrawAll(app, canvas):
     drawCompass(app, canvas)
     drawUserOptions(app, canvas)
+    drawFields(app, canvas, 'E')
+    drawFields(app, canvas, 'B')
     drawPointCharges(app, canvas)
     drawMenu(app, canvas)
     drawErrorMessage(app, canvas)
@@ -318,13 +322,19 @@ def drawCompass(app, canvas):
 def drawUserOptions(app, canvas):
     canvas.create_line(app.width - app.userOptionsWidth,
             0, app.width - app.userOptionsWidth, app.height - app.userOptionsWidth)
-    #TODO: draw title
     
-    canvas.create_text(app.optionsCX, 50, text = 'EBFields', 
+    canvas.create_text(app.optionsCX, 25, text = 'EBFields', 
             font = 'Arial 25 bold', anchor = 'center')
-    canvas.create_text(app.optionsCX, 80, text = 'Simulation', 
+    canvas.create_text(app.optionsCX, 55, text = 'Simulation', 
             font = 'Arial 25 bold', anchor = 'center')
     
+    canvas.create_text(app.optionsCX, 85, text = 'By William Tang',
+            font = 'Arial 20', anchor = 'center')
+    
+    lineY = (85 + 10 + app.pointChargeOptionYs[0]) // 2
+    canvas.create_line(app.width - app.userOptionsWidth,
+            lineY, app.width, lineY)
+
     drawPointChargeOption(app, canvas)
     drawEFieldOption(app, canvas)
     drawBFieldOption(app, canvas)
@@ -478,10 +488,47 @@ def drawErrorMessage(app, canvas):
 def drawPointCharges(app, canvas):
     for currentPointCharge in app.allPointCharges:
         canvas.create_oval(currentPointCharge.cx - app.pointChargeRadius,
-        currentPointCharge.cy - app.pointChargeRadius,
-        currentPointCharge.cx + app.pointChargeRadius,
-        currentPointCharge.cy + app.pointChargeRadius,
-        fill = app.pcColor)
+                currentPointCharge.cy - app.pointChargeRadius,
+                currentPointCharge.cx + app.pointChargeRadius,
+                currentPointCharge.cy + app.pointChargeRadius,
+                fill = app.pcColor)
+        canvas.create_text(currentPointCharge.cx, currentPointCharge.cy,
+                text = currentPointCharge.charge, fill = 'white')
+
+def drawFieldItem(app, canvas, x0, y0, x1, y1, direction):
+    if direction == 'I':
+        crossMargin = 8
+        canvas.create_line(x0 + crossMargin, y0 + crossMargin, 
+                x1 - crossMargin, y1 - crossMargin, fill = 'white')
+        canvas.create_line(x0 + crossMargin, y1 - crossMargin, 
+                x1 - crossMargin, y0 + crossMargin, fill = 'white')
+    elif direction == 'O':
+        cx = (x0 + x1) // 2
+        cy = (y0 + y1) // 2
+        canvas.create_oval(cx - 2, cy - 2, cx + 2, cy + 2, fill = 'white')
+
+def drawFields(app, canvas, fieldType):
+    width = app.width - app.userOptionsWidth
+    fieldList = app.allEFields if fieldType == 'E' else app.allBFields
+    color = 'dark blue' if fieldType == 'E' else 'dark red'
+    for currentField in fieldList:
+        currentListOfLocations = Calculations.getFieldLocations(
+                width, app.height, fieldType, currentField.direction)
+        for (x0, y0, x1, y1) in currentListOfLocations:
+            if currentField.direction == 'I' or currentField.direction == 'O':
+                canvas.create_oval(x0 + app.inOutSymbolMargin, 
+                        y0 + app.inOutSymbolMargin, 
+                        x1 - app.inOutSymbolMargin, 
+                        y1 - app.inOutSymbolMargin, fill = color)
+                drawFieldItem(app, canvas, x0 + app.inOutSymbolMargin, 
+                        y0 + app.inOutSymbolMargin, 
+                        x1 - app.inOutSymbolMargin, 
+                        y1 - app.inOutSymbolMargin, currentField.direction)
+            else:
+                canvas.create_line(x0, y0, x1, y1, fill = color,
+                        width = app.arrowThickness)
+                drawFieldItem(app, canvas, x0, y0, x1, y1, 
+                        currentField.direction)
 
 def drawDraggingObject(app, canvas):
     if app.draggingPC != None:
@@ -490,6 +537,8 @@ def drawDraggingObject(app, canvas):
             cy - app.pointChargeRadius, 
             cx + app.pointChargeRadius,
             cy + app.pointChargeRadius, fill = app.pcColor)
+        canvas.create_text(cx, cy,
+                text = '+', fill = 'white')
     elif app.draggingEField != None:
         x0 = app.draggingEField[0] - app.optionArrowLength // 2
         x1 = x0 + app.optionArrowLength
@@ -567,6 +616,5 @@ def drawAskDataForField(app, canvas, fieldType):
             app.askCX + 120, app.askCY + 50, fill = 'white', width = 3)
     canvas.create_text(app.askCX + 75, app.askCY + 30, text = 'Submit', 
             font = 'Arial 20', anchor = 'center')
-
 
 runApp(width = 1000, height = 700)
