@@ -230,21 +230,21 @@ def drawMenu(app, canvas):
             app.submitButtonWidth, app.submitButtonHeight, app.submitButtonCX)
 
     # Draw delete button
-    deleteButtonWidth = 80
-    deleteButtonHeight = 20
-    deleteButtonCY = app.displayMenuRectCY + 140
-    canvas.create_rectangle(app.displayMenuRectCX - deleteButtonWidth // 2,
-            deleteButtonCY - deleteButtonHeight // 2,
-            app.displayMenuRectCX + deleteButtonWidth // 2,
-            deleteButtonCY + deleteButtonHeight // 2,
+    canvas.create_rectangle(app.deleteButtonLocation[0],
+            app.deleteButtonLocation[1],
+            app.deleteButtonLocation[2],
+            app.deleteButtonLocation[3],
             fill = 'white', width = 3)
-    canvas.create_text(app.displayMenuRectCX, deleteButtonCY, 
+    canvas.create_text(app.displayMenuRectCX, app.deleteButtonCY, 
             text = 'Delete', font = 'Arial 18', anchor = 'center')
 
 def drawMenuDisplayInformation(app, canvas, width, height, titleCX):
+    graphicsX = Calculations.graphicsToCartesianX(app.menuPointCharge.cx, 
+            app.width - app.userOptionsWidth)
+    graphicsY = Calculations.graphicsToCartesianY(app.menuPointCharge.cy, 
+            app.height)
     canvas.create_text(titleCX, app.checkboxXLocation[1] - 75,
-            text = f'Position: ({app.menuPointCharge.cx}, ' + 
-            f'{app.menuPointCharge.cy})', fill = 'white', 
+            text = f'Position: ({graphicsX}, {graphicsY})', fill = 'white', 
             font = 'Arial 17', anchor = 'w')
     canvas.create_text(titleCX, app.checkboxXLocation[1] - 52, 
             text = f'Charge: {app.menuPointCharge.charge}', fill = 'white', 
@@ -268,9 +268,9 @@ def drawXMenu(app, canvas, width, height, titleCX, textboxCX,
                 app.checkboxXLocation[2] - 10,
                 app.checkboxXLocation[3] - 5, width = 2)
     if app.menuPCX != None:
-        canvas.create_text(app.checkboxXLocation[2] - 18, 
+        canvas.create_text(app.checkboxXLocation[2] - 12, 
                 (app.checkboxXLocation[1] + 5 + app.checkboxXLocation[3] - 5) // 2,
-                text = app.menuPCX, fill = 'black', anchor = 'center')
+                text = app.menuPCX, fill = 'black', anchor = 'e')
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
             app.checkboxXLocation[1],
             submitButtonCX + submitButtonWidth // 2,
@@ -295,9 +295,9 @@ def drawYMenu(app, canvas, width, height, titleCX, textboxCX,
                 app.checkboxYLocation[2] - 10,
                 app.checkboxYLocation[3] - 5, width = 2)
     if app.menuPCY != None:
-        canvas.create_text(app.checkboxYLocation[2] - 18, 
+        canvas.create_text(app.checkboxYLocation[2] - 12, 
                 (app.checkboxYLocation[1] + 5 + app.checkboxYLocation[3] - 5) // 2,
-                text = app.menuPCY, fill = 'black', anchor = 'center')
+                text = app.menuPCY, fill = 'black', anchor = 'e')
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
             app.checkboxYLocation[1],
             submitButtonCX + submitButtonWidth // 2,
@@ -322,10 +322,10 @@ def drawChargeMenu(app, canvas, width, height, titleCX, textboxCX,
                 app.checkboxChargeLocation[2] - 10,
                 app.checkboxChargeLocation[3] - 5, width = 2)
     if app.menuPCCharge != None:
-        canvas.create_text(app.checkboxChargeLocation[2] - 18, 
+        canvas.create_text(app.checkboxChargeLocation[2] - 12, 
                 (app.checkboxChargeLocation[1] + 5 + 
                 app.checkboxChargeLocation[3] - 5) // 2,
-                text = app.menuPCCharge, fill = 'black', anchor = 'center')
+                text = app.menuPCCharge, fill = 'black', anchor = 'e')
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
             app.checkboxChargeLocation[1],
             submitButtonCX + submitButtonWidth // 2,
@@ -350,11 +350,11 @@ def drawVelocityDirectionMenu(app, canvas, width, height, titleCX, textboxCX,
                 app.checkboxVelocityDirectionLocation[2] - 10,
                 app.checkboxVelocityDirectionLocation[3] - 5, width = 2)
     if app.menuPCVelocityDirection != None:
-        canvas.create_text(app.checkboxVelocityDirectionLocation[2] - 18, 
+        canvas.create_text(app.checkboxVelocityDirectionLocation[2] - 12, 
                 (app.checkboxVelocityDirectionLocation[1] + 5 + 
                 app.checkboxVelocityDirectionLocation[3] - 5) // 2,
                 text = app.menuPCVelocityDirection, fill = 'black', 
-                anchor = 'center')
+                anchor = 'e')
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
             app.checkboxVelocityDirectionLocation[1],
             submitButtonCX + submitButtonWidth // 2,

@@ -51,3 +51,15 @@ def getFieldLocations(width, height, fieldType, direction):
     elif direction == 'I' or direction == 'O':
         return getFieldLocationsZDimension(margin, width, height, 
                 fieldType, direction, spaceIntoLinesDivider)
+
+def cartesianToGraphicsX(cartX, width):
+    return cartX + width // 2
+
+def cartesianToGraphicsY(cartY, height):
+    return cartY + height // 2
+
+def graphicsToCartesianX(graphicsX, width):
+    return graphicsX - width // 2
+
+def graphicsToCartesianY(graphicsY, height):
+    return graphicsY - height // 2

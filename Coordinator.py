@@ -41,6 +41,9 @@ def setConstants(app):
     app.submitButtonWidth = 80
     app.submitButtonHeight = 30
 
+    app.deleteButtonWidth = 80
+    app.deleteButtonHeight = 20
+
 def appStarted(app):
     setConstants(app)
     reset(app)
@@ -49,9 +52,6 @@ def reset(app):
     app.allPointCharges = []
     app.allEFields = []
     app.allBFields = []
-    app.displayMenu = None
-    app.displayMenuRectCX = None
-    app.displayMenuRectCY = None
     app.errorMessage = None
     app.errorMessageTimer = None
 
@@ -65,6 +65,13 @@ def reset(app):
     app.isAskDataForBField = False
 
     app.askDataFieldDirection = None
+    
+    resetMenuInfo(app)
+
+def resetMenuInfo(app):
+    app.displayMenu = None
+    app.displayMenuRectCX = None
+    app.displayMenuRectCY = None
 
     app.submitButtonCX = None
     app.menuPCX = None
@@ -76,8 +83,8 @@ def reset(app):
     app.checkboxYLocation = None
     app.checkboxChargeLocation = None
     app.checkboxVelocityDirectionLocation = None
-
     app.menuPointCharge = None
+    app.deleteButtonCY = None
 
 # Returns distance between 2 points
 def distance(x1, y1, x2, y2):
@@ -127,6 +134,13 @@ def setDisplayMenuInfo(app):
     titleCX = app.displayMenuRectCX - app.displayMenuRectWidth // 2 + 15
     textboxCX = titleCX + 60
     app.submitButtonCX = textboxCX + 110
+    
+    app.deleteButtonCY = app.displayMenuRectCY + 140
+    app.deleteButtonLocation = (
+            app.displayMenuRectCX - app.deleteButtonWidth // 2,
+            app.deleteButtonCY - app.deleteButtonHeight // 2,
+            app.displayMenuRectCX + app.deleteButtonWidth // 2,
+            app.deleteButtonCY + app.deleteButtonHeight // 2)
 
 # Returns the location to set the menu
 def getMenuLocations(app):
@@ -168,34 +182,77 @@ def isValidDirectionEntry(app, key):
     return (key == 'U' or key == 'D' or key == 'L' or key == 'R' or 
             key == 'I' or key == 'O')
 
+def isValidPCRelocation(app, x, y, movingPC):
+    if (0 > x - app.pointChargeRadius or 
+            app.width - app.userOptionsWidth <= x + app.pointChargeRadius):
+        return 'Error 1'
+    if (0 > y - app.pointChargeRadius or
+            app.height <= y + app.pointChargeRadius):
+        return 'Error 1'
+    
+    # check for collision except against movingPC
+    for currentPC in app.allPointCharges:
+        if currentPC == movingPC:
+            continue
+        if (distance(x, y, currentPC.cx, currentPC.cy) <= 
+                2*app.pointChargeRadius):
+            return 'Error 2'
+    return 'Works'
+
+def isStringParseableToInt(s):
+    if s == '-':
+        return False
+    for index in range(0, len(s)):
+        if not (s[index].isdigit() or (index == 0 and s[index] == '-')):
+            return False
+    return True
+
 def keyPressed(app, event):
     if app.isAskDataForEField or app.isAskDataForBField:
         if event.key == 'Enter':
                 shouldAskSubmit(app)
+        elif event.key == 'Delete':
+            if app.askDataFieldDirection != None:
+                app.askDataFieldDirection = app.askDataFieldDirection[:-1]
         elif isValidDirectionEntry(app, event.key):
             app.askDataFieldDirection = event.key
         else:
             setErrorMessage(app, 'Please enter a valid direction.')
             app.askDataFieldDirection = None
     elif app.menuSelected == 'x':
-        if event.key == 'Enter' and app.menuPCX != None:
+        if (event.key == 'Enter' and app.menuPCX != None and 
+                isStringParseableToInt(app.menuPCX)):
             shouldMenuPCSubmit(app)
-        elif event.key.isdigit(): # TODO: error checking on x
-            app.menuPCX = event.key
+        elif event.key == 'Delete':
+            if app.menuPCX != None:
+                app.menuPCX = app.menuPCX[:-1]
+        elif event.key.isdigit() or event.key == '-':
+            if app.menuPCX == None:
+                app.menuPCX = ''
+            app.menuPCX += event.key
         else:
             setErrorMessage(app, 'Please enter a valid x.')
             app.menuPCX = None
     elif app.menuSelected == 'y':
-        if event.key == 'Enter' and app.menuPCY != None:
+        if (event.key == 'Enter' and app.menuPCX != None and 
+                isStringParseableToInt(app.menuPCY)):
             shouldMenuPCSubmit(app)
-        elif event.key.isdigit(): # TODO: error checking on y
-            app.menuPCY = event.key
+        elif event.key == 'Delete':
+            if app.menuPCY != None:
+                app.menuPCY = app.menuPCY[:-1]
+        elif event.key.isdigit() or event.key == '-':
+            if app.menuPCY == None:
+                app.menuPCY = ''
+            app.menuPCY += event.key
         else:
             setErrorMessage(app, 'Please enter a valid y.')
             app.menuPCY = None
     elif app.menuSelected == 'Charge':
         if event.key == 'Enter' and app.menuPCCharge != None:
             shouldMenuPCSubmit(app)
+        elif event.key == 'Delete':
+            if app.menuPCCharge != None:
+                app.menuPCCharge = app.menuPCCharge[:-1]
         elif event.key == '+' or event.key == '-':
             app.menuPCCharge = event.key
         else:
@@ -204,9 +261,12 @@ def keyPressed(app, event):
     elif app.menuSelected == 'Velocity Direction':
         if event.key == 'Enter' and app.menuPCVelocityDirection != None:
             shouldMenuPCSubmit(app)
+        elif event.key == 'Delete':
+            if app.menuPCVelocityDirection != None:
+                app.menuPCVelocityDirection = app.menuPCVelocityDirection[:-1]
         #TODO: error checking direction for velocity direction
         elif isValidDirectionEntry(app, event.key): 
-            app.menuPCVelocityDirection = event.key
+            app.menuPCVelocityDirection = event.key.upper()
         else:
             setErrorMessage(app, 'Please enter a valid velocity direction.')
             app.menuPCVelocityDirection = None
@@ -251,13 +311,32 @@ def hasDuplicateFieldInList(app, currentField, fieldList):
 
 def shouldMenuPCSubmit(app):
     if app.menuSelected == 'x':
-        app.menuPointCharge.cx = int(app.menuPCX)
-        app.menuPCX = None
-        setDisplayMenuInfo(app)
+        cartesianX = Calculations.cartesianToGraphicsX(int(app.menuPCX), 
+                app.width - app.userOptionsWidth)
+        doesWork = isValidPCRelocation(app, cartesianX, app.menuPointCharge.cy, 
+                app.menuPointCharge)
+        if doesWork == 'Works':
+            app.menuPointCharge.cx = cartesianX
+            app.menuPCX = None
+            setDisplayMenuInfo(app)
+        elif doesWork == 'Error 1':
+            setErrorMessage(app, 'Location out of bounds.')
+        else:
+            setErrorMessage(app, 'Location collides with another point charge.')
+
     elif app.menuSelected == 'y':
-        app.menuPointCharge.cy = int(app.menuPCY)
-        app.menuPCY = None
-        setDisplayMenuInfo(app)
+        cartesianY = Calculations.cartesianToGraphicsY(int(app.menuPCY), 
+                app.height)
+        doesWork = isValidPCRelocation(app, app.menuPointCharge.cx, cartesianY,
+                app.menuPointCharge)
+        if doesWork == 'Works':
+            app.menuPointCharge.cy = cartesianY
+            app.menuPCY = None
+            setDisplayMenuInfo(app)
+        elif doesWork == 'Error 1':
+            setErrorMessage(app, 'Location out of bounds.')
+        else:
+            setErrorMessage(app, 'Location collides with another point charge.')
     elif app.menuSelected == 'Charge':
         app.menuPointCharge.charge = app.menuPCCharge
         app.menuPCCharge = None
@@ -291,6 +370,12 @@ def clickedInMenu(app, event):
     if checkClickedMenuExit(app, event):
         return
     
+    if (app.deleteButtonLocation[0] <= event.x <= app.deleteButtonLocation[2] and
+            app.deleteButtonLocation[1] <= event.y <= app.deleteButtonLocation[3]):
+        app.allPointCharges.remove(app.menuPointCharge)
+        resetMenuInfo(app)
+        return
+
     if (app.checkboxXLocation[1] <= event.y <= 
             app.checkboxXLocation[3]):
         if (app.checkboxXLocation[0] <= event.x <= 
@@ -298,7 +383,11 @@ def clickedInMenu(app, event):
             app.menuSelected = 'x'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
-            shouldMenuPCSubmit(app)
+            if app.menuPCX != None and isStringParseableToInt(app.menuPCX):
+                shouldMenuPCSubmit(app)
+            else:
+                setErrorMessage(app, 'Please enter a valid x.')
+                app.menuPCX = None
     elif (app.checkboxYLocation[1] <= event.y <= 
             app.checkboxYLocation[3]):
         if (app.checkboxYLocation[0] <= event.x <= 
@@ -306,7 +395,11 @@ def clickedInMenu(app, event):
             app.menuSelected = 'y'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
-            shouldMenuPCSubmit(app)
+            if app.menuPCY != None and isStringParseableToInt(app.menuPCY):
+                shouldMenuPCSubmit(app)
+            else:
+                setErrorMessage(app, 'Please enter a valid y.')
+                app.menuPCY = None
     elif (app.checkboxChargeLocation[1] <= event.y <= 
             app.checkboxChargeLocation[3]):
         if (app.checkboxChargeLocation[0] <= event.x <= 
@@ -314,7 +407,11 @@ def clickedInMenu(app, event):
             app.menuSelected = 'Charge'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
-            shouldMenuPCSubmit(app)
+            if app.menuPCCharge != None:
+                shouldMenuPCSubmit(app)
+            else:
+                setErrorMessage(app, 'Please enter a valid charge.')
+                app.menuPCCharge = None
     elif (app.checkboxVelocityDirectionLocation[1] <= event.y <= 
             app.checkboxVelocityDirectionLocation[3]):
         if (app.checkboxVelocityDirectionLocation[0] <= event.x <= 
@@ -322,7 +419,11 @@ def clickedInMenu(app, event):
             app.menuSelected = 'Velocity Direction'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
-            shouldMenuPCSubmit(app)
+            if app.menuPCVelocityDirection != None:
+                shouldMenuPCSubmit(app)
+            else:
+                setErrorMessage(app, 'Please enter a valid velocity direction.')
+                app.menuPCVelocityDirection = None
 
 def mousePressed(app, event):
     if checkClickedOutOfMenu(app, event):
