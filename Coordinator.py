@@ -25,6 +25,7 @@ def setConstants(app):
     app.checkboxCX = app.optionsCX - app.optionsDrawingWidth // 3
     app.compassArrowLength = 30
     app.forceArrowLength = 60
+    app.pcForceArrowLength = 40
     app.optionShortLineArrowLength = 15
     app.arrowThickness = 2
     app.pcColor = 'Black'
@@ -44,7 +45,7 @@ def setConstants(app):
 
     app.deleteButtonWidth = 80
     app.deleteButtonHeight = 20
-    app.pcToForceCircleMargin = 10
+    app.pcToForceCircleMargin = 7
     app.forceCircleRadius = 7
 
 def appStarted(app):

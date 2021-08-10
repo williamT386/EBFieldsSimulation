@@ -19,6 +19,7 @@ def drawAll(app, canvas):
         drawAskDataForField(app, canvas, 'Electric')
     elif app.isAskDataForBField:
         drawAskDataForField(app, canvas, 'Magnetic')
+    drawPCInteractions(app, canvas)
 
 # Returns the location to set the menu
 def getMenuLocations(app):
@@ -110,7 +111,7 @@ def drawUserOptions(app, canvas):
     drawPointChargeOption(app, canvas)
     drawEFieldOption(app, canvas)
     drawBFieldOption(app, canvas)
-    drawInteractionsBetweenPCOption(app, canvas)
+    drawCheckboxInteractions(app, canvas)
     drawResetButton(app, canvas)
 
 # Draws the point charge option
@@ -175,7 +176,7 @@ def drawBFieldOption(app, canvas):
     canvas.create_text(app.checkboxCX + 67, checkBoxCY, 
             text = 'Magnetic Field', font = 'Arial 15', anchor = 'center')
 
-def drawInteractionsBetweenPCOption(app, canvas):
+def drawCheckboxInteractions(app, canvas):
     canvas.create_rectangle(app.optionsCX - app.optionsDrawingWidth // 2,
             app.interactionsBetweenPCOptionYs[0], 
             app.optionsCX + app.optionsDrawingWidth // 2, 
@@ -422,9 +423,8 @@ def drawPointCharges(app, canvas):
         canvas.create_text(currentPointCharge.cx, currentPointCharge.cy,
                 text = currentPointCharge.charge, fill = 'white')
 
-def drawFieldorForceItem(app, canvas, x0, y0, x1, y1, direction, color):
+def drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, color):
     angle = math.pi / 4
-    errorShift = 2
     if direction == 'I':
         crossMargin = 6
         canvas.create_line(x0 + crossMargin, y0 + crossMargin, 
@@ -435,33 +435,37 @@ def drawFieldorForceItem(app, canvas, x0, y0, x1, y1, direction, color):
         cx = (x0 + x1) // 2
         cy = (y0 + y1) // 2
         canvas.create_oval(cx - 2, cy - 2, cx + 2, cy + 2, fill = 'white')
-    elif direction == 'R':
+    elif direction == 'R' or (isinstance(direction, list) and 
+            len(direction) == 1 and direction[0] == 'R'):
         x0Arrow = x1 - app.optionShortLineArrowLength * math.cos(angle)
         yAArrow = y1 - app.optionShortLineArrowLength * math.sin(angle)
         yBArrow = y1 + app.optionShortLineArrowLength * math.sin(angle)
         canvas.create_line(x0Arrow, yAArrow, x1, y1, x0Arrow, yBArrow, 
                 fill = color, width = app.arrowThickness)
-    elif direction == 'L':
-        x0 += errorShift
+    elif direction == 'L' or (isinstance(direction, list) and 
+            len(direction) == 1 and direction[0] == 'L'):
         x1Arrow = x0 + app.optionShortLineArrowLength * math.cos(angle)
         yAArrow = y1 - app.optionShortLineArrowLength * math.sin(angle)
         yBArrow = y1 + app.optionShortLineArrowLength * math.sin(angle)
         canvas.create_line(x1Arrow, yAArrow, x0, y0, x1Arrow, yBArrow, 
                 fill = color, width = app.arrowThickness)
-    elif direction == 'U':
-        y0 += errorShift
+    elif direction == 'U' or (isinstance(direction, list) and 
+            len(direction) == 1 and direction[0] == 'U'):
         xAArrow = x0 - app.optionShortLineArrowLength * math.cos(angle)
         xBArrow = x0 + app.optionShortLineArrowLength * math.cos(angle)
         y1Arrow = y0 + app.optionShortLineArrowLength * math.sin(angle)
         canvas.create_line(xAArrow, y1Arrow, x0, y0, xBArrow, y1Arrow, 
                 fill = color, width = app.arrowThickness)
-    elif direction == 'D':
-        y1 -= errorShift
+    elif direction == 'D' or (isinstance(direction, list) and 
+            len(direction) == 1 and direction[0] == 'D'):
         xAArrow = x1 - app.optionShortLineArrowLength * math.cos(angle)
         xBArrow = x1 + app.optionShortLineArrowLength * math.cos(angle)
         y1Arrow = y1 - app.optionShortLineArrowLength * math.sin(angle)
         canvas.create_line(xAArrow, y1Arrow, x1, y1, xBArrow, y1Arrow, 
                 fill = color, width = app.arrowThickness)
+    # direction is 2D
+    else:
+        pass
 
 def drawFields(app, canvas, fieldType):
     width = app.width - app.userOptionsWidth
@@ -476,7 +480,7 @@ def drawFields(app, canvas, fieldType):
                         y0 + app.inOutSymbolMargin, 
                         x1 - app.inOutSymbolMargin, 
                         y1 - app.inOutSymbolMargin, fill = color)
-                drawFieldorForceItem(app, canvas, x0 + app.inOutSymbolMargin, 
+                drawFieldorForceAdditionalItem(app, canvas, x0 + app.inOutSymbolMargin, 
                         y0 + app.inOutSymbolMargin, 
                         x1 - app.inOutSymbolMargin, 
                         y1 - app.inOutSymbolMargin, currentField.direction, 
@@ -484,7 +488,7 @@ def drawFields(app, canvas, fieldType):
             else:
                 canvas.create_line(x0, y0, x1, y1, fill = color,
                         width = app.arrowThickness)
-                drawFieldorForceItem(app, canvas, x0, y0, x1, y1, 
+                drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, 
                         currentField.direction, color)
 
 def drawDraggingObject(app, canvas):
@@ -583,23 +587,29 @@ def drawOriginDot(app, canvas):
     canvas.create_text(graphicsX + 11, graphicsY + 8, text = '(0, 0)',
             font = 'Arial 8', fill = 'gray')
 
-def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor):
-    if direction == 'U':
+def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor,
+                            arrowLength = None):
+    if arrowLength == None:
+        arrowLength = app.forceArrowLength
+    if direction == 'U' or (isinstance(direction, list) and 
+            len(direction) == 1 and direction[0] == 'U'):
         x0 = x1 = currentPC.cx
         y1 = currentPC.cy - app.pointChargeRadius
-        y0 = y1 - app.forceArrowLength
+        y0 = y1 - arrowLength
         canvas.create_line(x0, y0, x1, y1, fill = arrowColor, 
                 width = app.arrowThickness)
-    elif direction == 'D':
+    elif direction == 'D' or (isinstance(direction, list) and 
+            len(direction) == 1 and direction[0] == 'D'):
         x0 = x1 = currentPC.cx
         y0 = currentPC.cy + app.pointChargeRadius
-        y1 = y0 + app.forceArrowLength
+        y1 = y0 + arrowLength
         canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
                 width = app.arrowThickness)
-    elif direction == 'R':
+    elif direction == 'R' or (isinstance(direction, list) and 
+            len(direction) == 1 and direction[0] == 'R'):
         y0 = y1 = currentPC.cy
         x0 = currentPC.cx + app.pointChargeRadius
-        x1 = x0 + app.forceArrowLength
+        x1 = x0 + arrowLength
         if x1 > app.width - app.userOptionsWidth:
             x1 = app.width - app.userOptionsWidth
             canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
@@ -607,10 +617,32 @@ def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor):
             return
         canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
                     width = app.arrowThickness)
-    elif direction == 'L':
+    elif direction == 'L' or (isinstance(direction, list) and 
+            len(direction) == 1 and direction[0] == 'L'):
         y0 = y1 = currentPC.cy
         x1 = currentPC.cx - app.pointChargeRadius
-        x0 = x1 - app.forceArrowLength
+        x0 = x1 - arrowLength
+        canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
+                width = app.arrowThickness)
+    #TODO: current version only handles XY plane
+    elif isinstance(direction, list) and len(direction) > 1:
+        radiansAngle = math.radians(direction[1])
+        if direction[0] == 'R':
+            dx0 = app.pointChargeRadius * math.cos(radiansAngle)
+            dx1 = app.forceArrowLength * math.cos(radiansAngle)
+        else:
+            dx0 = -app.pointChargeRadius * math.cos(radiansAngle)
+            dx1 = -app.forceArrowLength * math.cos(radiansAngle)
+        if direction[2] == 'U':
+            dy0 = -app.pointChargeRadius * math.sin(radiansAngle)
+            dy1 = -app.forceArrowLength * math.sin(radiansAngle)
+        else:
+            dy0 = app.pointChargeRadius * math.sin(radiansAngle)
+            dy1 = app.forceArrowLength * math.sin(radiansAngle)
+        x0 = currentPC.cx + dx0
+        y0 = currentPC.cy + dy0
+        x1 = x0 + dx1
+        y1 = y0 + dy1
         canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
                 width = app.arrowThickness)
     else:
@@ -618,7 +650,25 @@ def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor):
                 direction, arrowColor)
         return
     
-    drawFieldorForceItem(app, canvas, x0, y0, x1, y1, direction, arrowColor)
+    drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, arrowColor)
+
+def convertDirectionToLorRFirstXD(direction):
+    result = []
+    result.append(direction[0])
+    result.append(int(direction[1]))
+    if direction[2].isdigit():
+        result[1] = result[1]*10 + int(direction[2])
+        result.append(direction[3])
+    else:
+        result.append(direction[2])
+    
+    if result[0] == 'L' or result[0] == 'R':
+        return result
+    # swap the directions
+    result[0], result[2] = result[2], result[0]
+    # save angle as 90 minus the angle
+    result[1] = 90 - result[1]
+    return result
 
 def determineBoundsAndDrawForceInOrOut(app, canvas, currentPC, direction, 
                                         arrowColor):
@@ -689,3 +739,54 @@ def drawFieldForces(app, canvas):
             draw1FieldForce(app, canvas, currentPC, currentEField)
         for currentBField in app.allBFields:
             draw1FieldForce(app, canvas, currentPC, currentBField)
+
+def drawPCInteractions(app, canvas):
+    if not app.showPCInteractions:
+        return
+    
+    for pcEffected in app.allPointCharges:
+        for pcCause in app.allPointCharges:
+            if pcEffected == pcCause:
+                continue
+            
+            bearing = calculateBearingAngleBetween(pcEffected.cx, 
+                    pcEffected.cy, pcCause.cx, pcCause.cy)
+            if pcCause.charge == pcEffected.charge:
+                bearing = calculateOppositeBearingAngle(bearing)
+            drawForceArrowInDirection(app, canvas, pcEffected, bearing, 'purple',
+                    app.pcForceArrowLength)
+
+def calculateBearingAngleBetween(xEffected, yEffected, xCause, yCause):
+    result = []
+    if xEffected < xCause:
+        result.append('R')
+    elif xEffected > xCause:
+        result.append('L')
+    
+    dx = abs(xEffected - xCause)
+    dy = abs(yEffected - yCause)
+    if dy == 0:
+        return result
+    elif dx == 0:
+        if yEffected < yCause:
+            result.append('D')
+        elif yEffected > yCause:
+            result.append('U')
+        return result
+    theta = math.degrees(math.atan(dy/dx))
+    result.append(theta)
+
+    if yEffected < yCause:
+        result.append('D')
+    elif yEffected > yCause:
+        result.append('U')
+    return result
+
+def calculateOppositeBearingAngle(bearingIn):
+    result = []
+    result.append(PointChargeClass.PointCharge.getOppositeDirection(bearingIn[0]))
+    if len(bearingIn) == 1:
+        return result
+    result.append(bearingIn[1])
+    result.append(PointChargeClass.PointCharge.getOppositeDirection(bearingIn[2]))
+    return result
