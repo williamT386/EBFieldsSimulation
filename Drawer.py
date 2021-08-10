@@ -150,7 +150,6 @@ def drawInteractionsBetweenPCOption(app, canvas):
             app.optionsCX + app.optionsDrawingWidth // 2, 
             app.interactionsBetweenPCOptionYs[1])
     
-    # app.showPCInteractions
     checkBoxCY = ((app.interactionsBetweenPCOptionYs[0] + 
             app.interactionsBetweenPCOptionYs[1])//2)
     checkBoxDimensions = 10
@@ -372,11 +371,10 @@ def drawErrorMessage(app, canvas):
     if app.errorMessage != None:
         textAndRectCX = app.width // 2
         textAndRectCY = app.height - 100
-        textAndRectWidth = 400
         textAndRectHeight = 30
-        canvas.create_rectangle(textAndRectCX - textAndRectWidth // 2, 
+        canvas.create_rectangle(textAndRectCX - app.errorMessageTextAndRectWidth // 2, 
                 textAndRectCY - textAndRectHeight // 2,
-                textAndRectCX + textAndRectWidth // 2,
+                textAndRectCX + app.errorMessageTextAndRectWidth // 2,
                 textAndRectCY + textAndRectHeight // 2,
                 fill = app.errorMessageColor)
         canvas.create_text(textAndRectCX, textAndRectCY, text = app.errorMessage,
@@ -573,9 +571,11 @@ def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor):
         x1 = x0 + app.forceArrowLength
         if x1 > app.width - app.userOptionsWidth:
             x1 = app.width - app.userOptionsWidth
+            canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
+                    width = app.arrowThickness)
+            return
         canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
-                width = app.arrowThickness)
-        return
+                    width = app.arrowThickness)
     elif direction == 'L':
         y0 = y1 = currentPC.cy
         x1 = currentPC.cx - app.pointChargeRadius
@@ -617,6 +617,19 @@ def drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, direction,
             forceCircleCX + app.forceCircleRadius,
             forceCircleCY + app.forceCircleRadius,
             fill = arrowColor)
+    if direction == 'I':
+        crossLength = 3
+        canvas.create_line(forceCircleCX - crossLength, 
+                forceCircleCY - crossLength, 
+                forceCircleCX + crossLength, 
+                forceCircleCY + crossLength, fill = 'white')
+        canvas.create_line(forceCircleCX + crossLength, 
+                forceCircleCY - crossLength, 
+                forceCircleCX - crossLength, 
+                forceCircleCY + crossLength, fill = 'white')
+    else:
+        canvas.create_oval(forceCircleCX - 2, forceCircleCY - 2, 
+                forceCircleCX + 2, forceCircleCY + 2, fill = 'white')
 
 def isValidForceCircleLocation(app, cx, cy):
     if cx - app.forceCircleRadius < 0:

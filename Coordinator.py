@@ -315,6 +315,13 @@ def hasDuplicateFieldInList(app, currentField, fieldList):
             return True
     return False
 
+def getOppositeFieldInList(app, currentField, fieldList):
+    for field in fieldList:
+        if (currentField.direction == 
+                PointChargeClass.PointCharge.getOppositeDirection(field.direction)):
+            return field
+    return None
+
 def shouldMenuPCSubmit(app):
     if app.menuSelected == 'x':
         cartesianX = Calculations.cartesianToGraphicsX(int(app.menuPCX), 
@@ -359,16 +366,34 @@ def shouldAskSubmit(app):
     if app.isAskDataForEField:
         app.isAskDataForEField = False
         currentEField = EFieldClass.EField(app.askDataFieldDirection)
-        if not hasDuplicateFieldInList(app, currentEField, app.allEFields):
+        oppositeField = getOppositeFieldInList(app, currentEField, app.allEFields)
+        if oppositeField != None:
+            app.allEFields.remove(oppositeField)
+            setErrorMessage(app, 'The same field in the opposite direction ' + 
+                    'already exists, so both are deleted because their ' + 
+                    'effects cancel.')
+            app.errorMessageColor = 'Light green'
+            app.errorMessageTextAndRectWidth = 640
+        elif not hasDuplicateFieldInList(app, currentEField, app.allEFields):
             app.allEFields.append(currentEField)
         else:
             setErrorMessage(app, 'This field already exists, so ' + 
                     'it will not be added to the simulation.')
             app.errorMessageColor = 'Light green'
+            print('case 1')
     else:
         app.isAskDataForBField = False
         currentBField = BFieldClass.BField(app.askDataFieldDirection)
-        if not hasDuplicateFieldInList(app, currentBField, app.allBFields):
+        oppositeField = getOppositeFieldInList(app, currentEField, app.allEFields)
+        if oppositeField != None:
+            app.allBFields.remove(oppositeField)
+            setErrorMessage(app, 'The same field in the opposite direction ' + 
+                    'already exists, so both are deleted because their ' + 
+                    'effects cancel.')
+            app.errorMessageColor = 'Light green'
+            app.errorMessageTextAndRectWidth = 640
+            print('case 2')
+        elif not hasDuplicateFieldInList(app, currentBField, app.allBFields):
             app.allBFields.append(currentBField)
         else:
             setErrorMessage(app, 'This field already exists, so ' + 
@@ -525,6 +550,8 @@ def setErrorMessage(app, message):
     app.errorMessage = message
     app.errorMessageTimer = 0
     app.errorMessageColor = 'Pink'
+    # used for the error message
+    app.errorMessageTextAndRectWidth = 400
 
 # Draws everything
 def redrawAll(app, canvas):
