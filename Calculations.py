@@ -63,6 +63,3 @@ def graphicsToCartesianX(graphicsX, width):
 
 def graphicsToCartesianY(graphicsY, height):
     return -(graphicsY - height // 2)
-
-def getEForceLocation(x0, y0, compassArrowLength, direction):
-    pass

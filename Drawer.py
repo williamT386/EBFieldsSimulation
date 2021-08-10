@@ -11,14 +11,14 @@ def drawAll(app, canvas):
     drawOriginDot(app, canvas)
     drawErrorMessage(app, canvas)
     drawDraggingObject(app, canvas)
-    if app.isAskDataForEField:
-        drawAskDataForField(app, canvas, 'Electric')
-    elif app.isAskDataForBField:
-        drawAskDataForField(app, canvas, 'Magnetic')
     
     drawFieldForces(app, canvas)
     drawPointCharges(app, canvas)
     drawMenu(app, canvas)
+    if app.isAskDataForEField:
+        drawAskDataForField(app, canvas, 'Electric')
+    elif app.isAskDataForBField:
+        drawAskDataForField(app, canvas, 'Magnetic')
 
 # Returns the location to set the menu
 def getMenuLocations(app):
@@ -42,6 +42,37 @@ def drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY,
     else:
         canvas.create_text(endX + textMargin * dx, allArrowsCY,
                 text = textIn, font = 'Arial 20', anchor = 'center')
+    
+    angle = math.pi / 4
+    errorShift = 2
+    # direction is L
+    if dx > 0:
+        x0Arrow = endX - app.optionShortLineArrowLength * math.cos(angle)
+        yAArrow = endY - app.optionShortLineArrowLength * math.sin(angle)
+        yBArrow = endY + app.optionShortLineArrowLength * math.sin(angle)
+        canvas.create_line(x0Arrow, yAArrow, endX, endY, x0Arrow, yBArrow, 
+                width = 1)
+    # direction is R
+    elif dx < 0:
+        x1Arrow = endX + app.optionShortLineArrowLength * math.cos(angle)
+        yAArrow = endY - app.optionShortLineArrowLength * math.sin(angle)
+        yBArrow = endY + app.optionShortLineArrowLength * math.sin(angle)
+        canvas.create_line(x1Arrow, yAArrow, endX, endY, x1Arrow, yBArrow, 
+                width = 1)
+    # direction is U
+    elif dy < 0:
+        xAArrow = endX - app.optionShortLineArrowLength * math.cos(angle)
+        xBArrow = endX + app.optionShortLineArrowLength * math.cos(angle)
+        y1Arrow = endY + app.optionShortLineArrowLength * math.sin(angle)
+        canvas.create_line(xAArrow, y1Arrow, endX, endY, xBArrow, y1Arrow, 
+                width = 1)
+    # direction is D
+    else:
+        xAArrow = endX - app.optionShortLineArrowLength * math.cos(angle)
+        xBArrow = endX + app.optionShortLineArrowLength * math.cos(angle)
+        y1Arrow = endY - app.optionShortLineArrowLength * math.sin(angle)
+        canvas.create_line(xAArrow, y1Arrow, endX, endY, xBArrow, y1Arrow, 
+                width = 1)
 
 # Draws the compass
 def drawCompass(app, canvas):

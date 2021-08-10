@@ -4,11 +4,11 @@ from cmu_112_graphics import *
 
 # Sets the app constants
 def setConstants(app):
-    app.pointChargeRadius = 10
+    app.maxPointCharges = 5
+    app.pointChargeRadius = 12
     app.displayMenuRectWidth = 250
     app.displayMenuRectHeight = 320
     app.menuExitDimensions = 20
-    app.maxPointCharges = 15
     app.defaultWidth = app.width
     app.defaultHeight = app.height
     app.userOptionsWidth = app.height // 4
