@@ -415,14 +415,42 @@ def drawErrorMessage(app, canvas):
 
 # Draws the point charges if possible
 def drawPointCharges(app, canvas):
-    for currentPointCharge in app.allPointCharges:
-        canvas.create_oval(currentPointCharge.cx - app.pointChargeRadius,
-                currentPointCharge.cy - app.pointChargeRadius,
-                currentPointCharge.cx + app.pointChargeRadius,
-                currentPointCharge.cy + app.pointChargeRadius,
+    for currentPC in app.allPointCharges:
+        canvas.create_oval(currentPC.cx - app.pointChargeRadius,
+                currentPC.cy - app.pointChargeRadius,
+                currentPC.cx + app.pointChargeRadius,
+                currentPC.cy + app.pointChargeRadius,
                 fill = app.pcColor)
-        canvas.create_text(currentPointCharge.cx, currentPointCharge.cy,
-                text = currentPointCharge.charge, fill = 'white')
+        canvas.create_text(currentPC.cx, currentPC.cy,
+                text = currentPC.charge, fill = 'white')
+        drawVelocity(app, canvas, currentPC)
+
+def drawVelocity(app, canvas, currentPC):
+    if currentPC.velocityDirection != None:
+        if currentPC.velocityDirection == 'I' or currentPC.velocityDirection == 'O':
+            determineBoundsAndDrawVelocityInOrOut(app, canvas, currentPC, 
+                    currentPC.velocityDirection, app.velocityArrowColor)
+        else:
+            drawForceArrowInDirection(app, canvas, currentPC, 
+                    currentPC.velocityDirection, app.velocityArrowColor, 
+                    app.velocityArrowLength)
+
+# only draw velocity in or out circle along x axis of point charge
+def determineBoundsAndDrawVelocityInOrOut(app, canvas, currentPC, 
+                    direction, arrowColor):
+    forceCircleCX = (currentPC.cx - app.pointChargeRadius - 
+            app.pcToForceCircleMargin * 2)
+    forceCircleCY = currentPC.cy
+    if isValidForceCircleLocation(app, forceCircleCX, forceCircleCY):
+        drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
+                direction, arrowColor)
+        return
+    
+    forceCircleCX = (currentPC.cx + app.pointChargeRadius + 
+            app.pcToForceCircleMargin * 2)
+    drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
+                direction, arrowColor)
+
 
 def drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, color):
     angle = math.pi / 4
@@ -689,9 +717,14 @@ def determineBoundsAndDrawForceInOrOut(app, canvas, currentPC, direction,
     
     forceCircleCX = currentPC.cx - app.pointChargeRadius - app.pcToForceCircleMargin
     forceCircleCY = currentPC.cy + app.pointChargeRadius + app.pcToForceCircleMargin
-    # if top left and top right corners are invalid, then bottom left must be valid
+    if isValidForceCircleLocation(app, forceCircleCX, forceCircleCY):
+        drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
+                direction, arrowColor)
+        return
+
+    forceCircleCX = currentPC.cx + app.pointChargeRadius + app.pcToForceCircleMargin
     drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
-            direction, arrowColor)
+                direction, arrowColor)
 
 def drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, direction, 
                             arrowColor):
@@ -730,11 +763,17 @@ def drawForceArrow(app, canvas, currentPC, direction, arrowColor, isElectric):
         if currentPC.charge == '-':
             direction = PointChargeClass.PointCharge.getOppositeDirection(direction)
         drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor)
+    else:
+        #TODO: draw magnetic forces
+        pass
 
 def draw1FieldForce(app, canvas, currentPC, currentField):
     if isinstance(currentField, EFieldClass.EField):
         drawForceArrow(app, canvas, currentPC, currentField.direction, 
                 app.eForceArrowColor, True)
+    else:
+        drawForceArrow(app, canvas, currentPC, currentField.direction, 
+                app.bForceArrowColor, False)
 
 def drawFieldForces(app, canvas):
     for currentPC in app.allPointCharges:

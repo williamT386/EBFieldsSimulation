@@ -4,7 +4,7 @@ from cmu_112_graphics import *
 
 # Sets the app constants
 def setConstants(app):
-    app.maxPointCharges = 10
+    app.maxPointCharges = 5
     app.pointChargeRadius = 12
     app.displayMenuRectWidth = 250
     app.displayMenuRectHeight = 320
@@ -24,16 +24,19 @@ def setConstants(app):
     app.showPCInteractions = False
     app.checkboxCX = app.optionsCX - app.optionsDrawingWidth // 3
     app.compassArrowLength = 30
+    app.optionShortLineArrowLength = 15
+    app.arrowThickness = 2 
+
     app.forceArrowLength = 60
     app.pcForceArrowLength = 50
     app.velocityArrowLength = 40
-    app.optionShortLineArrowLength = 15
-    app.arrowThickness = 2
     app.pcColor = 'Black'
     app.eArrowColor = 'Dark Blue'
     app.bArrowColor = 'Dark Red'
     app.eForceArrowColor = 'Pink'
+    app.bForceArrowColor = 'Yellow'
     app.pcEForceArrowColor = 'Purple'
+    app.velocityArrowColor = 'Orange'
     
     app.askCX = (app.width - app.optionsDrawingWidth) // 2
     app.askCY = app.height // 2
@@ -274,7 +277,7 @@ def keyPressed(app, event):
         elif event.key == 'Delete':
             if app.menuPCVelocityDirection != None:
                 app.menuPCVelocityDirection = app.menuPCVelocityDirection[:-1]
-        #TODO: error checking direction for velocity direction
+        #TODO: error checking direction for 2d velocity direction
         elif isValidDirectionEntry(app, event.key): 
             app.menuPCVelocityDirection = event.key.upper()
         else:
@@ -384,11 +387,10 @@ def shouldAskSubmit(app):
             setErrorMessage(app, 'This field already exists, so ' + 
                     'it will not be added to the simulation.')
             app.errorMessageColor = 'Light green'
-            print('case 1')
     else:
         app.isAskDataForBField = False
         currentBField = BFieldClass.BField(app.askDataFieldDirection)
-        oppositeField = getOppositeFieldInList(app, currentEField, app.allEFields)
+        oppositeField = getOppositeFieldInList(app, currentBField, app.allBFields)
         if oppositeField != None:
             app.allBFields.remove(oppositeField)
             setErrorMessage(app, 'The same field in the opposite direction ' + 
@@ -396,7 +398,6 @@ def shouldAskSubmit(app):
                     'effects cancel.')
             app.errorMessageColor = 'Light green'
             app.errorMessageTextAndRectWidth = 640
-            print('case 2')
         elif not hasDuplicateFieldInList(app, currentBField, app.allBFields):
             app.allBFields.append(currentBField)
         else:
@@ -536,7 +537,6 @@ def addPC(app, event):
     app.draggingPCOption = False
     app.draggingPC = None
 
-# TODO: create cancel effect when U and D fields are created of same field type
 def mouseReleased(app, event):
     if app.draggingPC != None:
         addPC(app, event)

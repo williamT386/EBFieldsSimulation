@@ -1,3 +1,6 @@
+import math
+import PointChargeClass
+
 def getFieldLocationsXDimension(margin, width, height,
         fieldType, direction, spaceIntoLinesDivider):
     numRows = (height - 2 * margin) // spaceIntoLinesDivider
