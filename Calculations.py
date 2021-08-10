@@ -63,3 +63,38 @@ def graphicsToCartesianX(graphicsX, width):
 
 def graphicsToCartesianY(graphicsY, height):
     return -(graphicsY - height // 2)
+
+def calculateBearingAngleBetween(xEffected, yEffected, xCause, yCause):
+    result = []
+    if xEffected < xCause:
+        result.append('R')
+    elif xEffected > xCause:
+        result.append('L')
+    
+    dx = abs(xEffected - xCause)
+    dy = abs(yEffected - yCause)
+    if dy == 0:
+        return result
+    elif dx == 0:
+        if yEffected < yCause:
+            result.append('D')
+        elif yEffected > yCause:
+            result.append('U')
+        return result
+    theta = math.degrees(math.atan(dy/dx))
+    result.append(theta)
+
+    if yEffected < yCause:
+        result.append('D')
+    elif yEffected > yCause:
+        result.append('U')
+    return result
+
+def calculateOppositeBearingAngle(bearingIn):
+    result = []
+    result.append(PointChargeClass.PointCharge.getOppositeDirection(bearingIn[0]))
+    if len(bearingIn) == 1:
+        return result
+    result.append(bearingIn[1])
+    result.append(PointChargeClass.PointCharge.getOppositeDirection(bearingIn[2]))
+    return result

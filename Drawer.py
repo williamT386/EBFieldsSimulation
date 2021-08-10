@@ -12,6 +12,7 @@ def drawAll(app, canvas):
     drawErrorMessage(app, canvas)
     drawDraggingObject(app, canvas)
     
+    drawPCInteractions(app, canvas)
     drawFieldForces(app, canvas)
     drawPointCharges(app, canvas)
     drawMenu(app, canvas)
@@ -19,7 +20,7 @@ def drawAll(app, canvas):
         drawAskDataForField(app, canvas, 'Electric')
     elif app.isAskDataForBField:
         drawAskDataForField(app, canvas, 'Magnetic')
-    drawPCInteractions(app, canvas)
+    
 
 # Returns the location to set the menu
 def getMenuLocations(app):
@@ -465,6 +466,7 @@ def drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, color
                 fill = color, width = app.arrowThickness)
     # direction is 2D
     else:
+        #TODO
         pass
 
 def drawFields(app, canvas, fieldType):
@@ -629,16 +631,16 @@ def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor,
         radiansAngle = math.radians(direction[1])
         if direction[0] == 'R':
             dx0 = app.pointChargeRadius * math.cos(radiansAngle)
-            dx1 = app.forceArrowLength * math.cos(radiansAngle)
+            dx1 = arrowLength * math.cos(radiansAngle)
         else:
             dx0 = -app.pointChargeRadius * math.cos(radiansAngle)
-            dx1 = -app.forceArrowLength * math.cos(radiansAngle)
+            dx1 = -arrowLength * math.cos(radiansAngle)
         if direction[2] == 'U':
             dy0 = -app.pointChargeRadius * math.sin(radiansAngle)
-            dy1 = -app.forceArrowLength * math.sin(radiansAngle)
+            dy1 = -arrowLength * math.sin(radiansAngle)
         else:
             dy0 = app.pointChargeRadius * math.sin(radiansAngle)
-            dy1 = app.forceArrowLength * math.sin(radiansAngle)
+            dy1 = arrowLength * math.sin(radiansAngle)
         x0 = currentPC.cx + dx0
         y0 = currentPC.cy + dy0
         x1 = x0 + dx1
@@ -731,7 +733,8 @@ def drawForceArrow(app, canvas, currentPC, direction, arrowColor, isElectric):
 
 def draw1FieldForce(app, canvas, currentPC, currentField):
     if isinstance(currentField, EFieldClass.EField):
-        drawForceArrow(app, canvas, currentPC, currentField.direction, 'pink', True)
+        drawForceArrow(app, canvas, currentPC, currentField.direction, 
+                app.eForceArrowColor, True)
 
 def drawFieldForces(app, canvas):
     for currentPC in app.allPointCharges:
@@ -749,44 +752,9 @@ def drawPCInteractions(app, canvas):
             if pcEffected == pcCause:
                 continue
             
-            bearing = calculateBearingAngleBetween(pcEffected.cx, 
+            bearing = Calculations.calculateBearingAngleBetween(pcEffected.cx, 
                     pcEffected.cy, pcCause.cx, pcCause.cy)
             if pcCause.charge == pcEffected.charge:
-                bearing = calculateOppositeBearingAngle(bearing)
-            drawForceArrowInDirection(app, canvas, pcEffected, bearing, 'purple',
-                    app.pcForceArrowLength)
-
-def calculateBearingAngleBetween(xEffected, yEffected, xCause, yCause):
-    result = []
-    if xEffected < xCause:
-        result.append('R')
-    elif xEffected > xCause:
-        result.append('L')
-    
-    dx = abs(xEffected - xCause)
-    dy = abs(yEffected - yCause)
-    if dy == 0:
-        return result
-    elif dx == 0:
-        if yEffected < yCause:
-            result.append('D')
-        elif yEffected > yCause:
-            result.append('U')
-        return result
-    theta = math.degrees(math.atan(dy/dx))
-    result.append(theta)
-
-    if yEffected < yCause:
-        result.append('D')
-    elif yEffected > yCause:
-        result.append('U')
-    return result
-
-def calculateOppositeBearingAngle(bearingIn):
-    result = []
-    result.append(PointChargeClass.PointCharge.getOppositeDirection(bearingIn[0]))
-    if len(bearingIn) == 1:
-        return result
-    result.append(bearingIn[1])
-    result.append(PointChargeClass.PointCharge.getOppositeDirection(bearingIn[2]))
-    return result
+                bearing = Calculations.calculateOppositeBearingAngle(bearing)
+            drawForceArrowInDirection(app, canvas, pcEffected, bearing, 
+                    app.pcEForceArrowColor, app.pcForceArrowLength)

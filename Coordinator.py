@@ -4,7 +4,7 @@ from cmu_112_graphics import *
 
 # Sets the app constants
 def setConstants(app):
-    app.maxPointCharges = 5
+    app.maxPointCharges = 10
     app.pointChargeRadius = 12
     app.displayMenuRectWidth = 250
     app.displayMenuRectHeight = 320
@@ -25,12 +25,15 @@ def setConstants(app):
     app.checkboxCX = app.optionsCX - app.optionsDrawingWidth // 3
     app.compassArrowLength = 30
     app.forceArrowLength = 60
-    app.pcForceArrowLength = 40
+    app.pcForceArrowLength = 50
+    app.velocityArrowLength = 40
     app.optionShortLineArrowLength = 15
     app.arrowThickness = 2
     app.pcColor = 'Black'
     app.eArrowColor = 'Dark Blue'
     app.bArrowColor = 'Dark Red'
+    app.eForceArrowColor = 'Pink'
+    app.pcEForceArrowColor = 'Purple'
     
     app.askCX = (app.width - app.optionsDrawingWidth) // 2
     app.askCY = app.height // 2
