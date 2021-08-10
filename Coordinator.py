@@ -8,7 +8,7 @@ def setConstants(app):
     app.displayMenuRectWidth = 250
     app.displayMenuRectHeight = 320
     app.menuExitDimensions = 20
-    app.maxPointCharges = 3
+    app.maxPointCharges = 15
     app.defaultWidth = app.width
     app.defaultHeight = app.height
     app.userOptionsWidth = app.height // 4
@@ -23,7 +23,8 @@ def setConstants(app):
     app.resetButtonOptionYs = (440, 470)
     app.showPCInteractions = False
     app.checkboxCX = app.optionsCX - app.optionsDrawingWidth // 3
-    app.optionArrowLength = 30
+    app.compassArrowLength = 30
+    app.forceArrowLength = 60
     app.optionShortLineArrowLength = 15
     app.arrowThickness = 2
     app.pcColor = 'Black'
@@ -43,6 +44,8 @@ def setConstants(app):
 
     app.deleteButtonWidth = 80
     app.deleteButtonHeight = 20
+    app.pcToForceCircleMargin = 10
+    app.forceCircleRadius = 7
 
 def appStarted(app):
     setConstants(app)
@@ -65,6 +68,8 @@ def reset(app):
     app.isAskDataForBField = False
 
     app.askDataFieldDirection = None
+
+    app.errorMessageColor = 'Pink'
     
     resetMenuInfo(app)
 
@@ -200,10 +205,11 @@ def isValidPCRelocation(app, x, y, movingPC):
     return 'Works'
 
 def isStringParseableToInt(s):
-    if s == '-':
+    if s == '-' or s == '+':
         return False
     for index in range(0, len(s)):
-        if not (s[index].isdigit() or (index == 0 and s[index] == '-')):
+        if not (s[index].isdigit() or (index == 0 and 
+                (s[index] == '-' or s[index] == '+'))):
             return False
     return True
 
@@ -226,7 +232,7 @@ def keyPressed(app, event):
         elif event.key == 'Delete':
             if app.menuPCX != None:
                 app.menuPCX = app.menuPCX[:-1]
-        elif event.key.isdigit() or event.key == '-':
+        elif event.key.isdigit() or event.key == '-' or event.key == '+':
             if app.menuPCX == None:
                 app.menuPCX = ''
             app.menuPCX += event.key
@@ -234,13 +240,13 @@ def keyPressed(app, event):
             setErrorMessage(app, 'Please enter a valid x.')
             app.menuPCX = None
     elif app.menuSelected == 'y':
-        if (event.key == 'Enter' and app.menuPCX != None and 
+        if (event.key == 'Enter' and app.menuPCY != None and 
                 isStringParseableToInt(app.menuPCY)):
             shouldMenuPCSubmit(app)
         elif event.key == 'Delete':
             if app.menuPCY != None:
                 app.menuPCY = app.menuPCY[:-1]
-        elif event.key.isdigit() or event.key == '-':
+        elif event.key.isdigit() or event.key == '-' or event.key == '+':
             if app.menuPCY == None:
                 app.menuPCY = ''
             app.menuPCY += event.key
@@ -343,6 +349,7 @@ def shouldMenuPCSubmit(app):
     elif app.menuSelected == 'Velocity Direction':
         app.menuPointCharge.velocityDirection = app.menuPCVelocityDirection
         app.menuPCVelocityDirection = None
+    app.menuSelected = None
 
 def shouldAskSubmit(app):
     if app.askDataFieldDirection == None:
@@ -354,11 +361,19 @@ def shouldAskSubmit(app):
         currentEField = EFieldClass.EField(app.askDataFieldDirection)
         if not hasDuplicateFieldInList(app, currentEField, app.allEFields):
             app.allEFields.append(currentEField)
+        else:
+            setErrorMessage(app, 'This field already exists, so ' + 
+                    'it will not be added to the simulation.')
+            app.errorMessageColor = 'Light green'
     else:
         app.isAskDataForBField = False
         currentBField = BFieldClass.BField(app.askDataFieldDirection)
         if not hasDuplicateFieldInList(app, currentBField, app.allBFields):
             app.allBFields.append(currentBField)
+        else:
+            setErrorMessage(app, 'This field already exists, so ' + 
+                    'it will not be added to the simulation.')
+            app.errorMessageColor = 'Light green'
     app.askDataFieldDirection = None
 
 def checkClickedAskSubmit(app, event):
@@ -509,6 +524,7 @@ def mouseReleased(app, event):
 def setErrorMessage(app, message):
     app.errorMessage = message
     app.errorMessageTimer = 0
+    app.errorMessageColor = 'Pink'
 
 # Draws everything
 def redrawAll(app, canvas):

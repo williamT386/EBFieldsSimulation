@@ -7,14 +7,18 @@ def drawAll(app, canvas):
     drawUserOptions(app, canvas)
     drawFields(app, canvas, 'E')
     drawFields(app, canvas, 'B')
-    drawPointCharges(app, canvas)
-    drawMenu(app, canvas)
+
+    drawOriginDot(app, canvas)
     drawErrorMessage(app, canvas)
     drawDraggingObject(app, canvas)
     if app.isAskDataForEField:
         drawAskDataForField(app, canvas, 'Electric')
     elif app.isAskDataForBField:
         drawAskDataForField(app, canvas, 'Magnetic')
+    
+    drawFieldForces(app, canvas)
+    drawPointCharges(app, canvas)
+    drawMenu(app, canvas)
 
 # Returns the location to set the menu
 def getMenuLocations(app):
@@ -25,13 +29,12 @@ def getMenuLocations(app):
     return cx, cy, width, height
 
 # Draws a compass arrow
-def drawCompassArrow(app, canvas, arrowLength, allArrowsCX, allArrowsCY, 
+def drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY, 
         direction, textIn):
     (dx, dy) = direction
-    endX = allArrowsCX + dx * arrowLength
-    endY = allArrowsCY + dy * arrowLength
+    endX = allArrowsCX + dx * compassArrowLength
+    endY = allArrowsCY + dy * compassArrowLength
     canvas.create_line(allArrowsCX, allArrowsCY, endX, endY)
-    
     textMargin = 10
     if dy != 0:
         canvas.create_text(allArrowsCX, endY + textMargin * dy, 
@@ -46,14 +49,14 @@ def drawCompass(app, canvas):
             app.width, app.height - app.userOptionsWidth)
     allArrowsCX = app.width - app.userOptionsWidth // 2
     allArrowsCY = app.height - app.userOptionsWidth // 2
-    arrowLength = app.userOptionsWidth // 2 - 25
-    drawCompassArrow(app, canvas, arrowLength, allArrowsCX, allArrowsCY, 
+    compassArrowLength = app.userOptionsWidth // 2 - 25
+    drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY, 
             (0, -1), 'U')
-    drawCompassArrow(app, canvas, arrowLength, allArrowsCX, allArrowsCY, 
+    drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY, 
             (0, 1), 'D')
-    drawCompassArrow(app, canvas, arrowLength, allArrowsCX, allArrowsCY, 
+    drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY, 
             (-1, 0), 'L')
-    drawCompassArrow(app, canvas, arrowLength, allArrowsCX, allArrowsCY, 
+    drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY, 
             (1, 0), 'R')
 
 # Draws the options
@@ -103,7 +106,7 @@ def drawEFieldOption(app, canvas):
     checkBoxCY = ((app.eFieldsOptionYs[0] + 
             app.eFieldsOptionYs[1])//2)
     x0 = app.checkboxCX - app.pointChargeRadius - 5
-    x1 = x0 + app.optionArrowLength
+    x1 = x0 + app.compassArrowLength
     canvas.create_line(x0, checkBoxCY, x1, checkBoxCY, 
             fill = app.eArrowColor, width = app.arrowThickness)
     angle = math.pi/4
@@ -126,7 +129,7 @@ def drawBFieldOption(app, canvas):
     checkBoxCY = ((app.bFieldsOptionYs[0] + 
             app.bFieldsOptionYs[1])//2)
     x0 = app.checkboxCX - app.pointChargeRadius - 5
-    x1 = x0 + app.optionArrowLength
+    x1 = x0 + app.compassArrowLength
     canvas.create_line(x0, checkBoxCY, x1, checkBoxCY, 
             fill = app.bArrowColor, width = app.arrowThickness)
     angle = math.pi/4
@@ -375,7 +378,7 @@ def drawErrorMessage(app, canvas):
                 textAndRectCY - textAndRectHeight // 2,
                 textAndRectCX + textAndRectWidth // 2,
                 textAndRectCY + textAndRectHeight // 2,
-                fill = 'pink')
+                fill = app.errorMessageColor)
         canvas.create_text(textAndRectCX, textAndRectCY, text = app.errorMessage,
                 anchor = 'center')
 
@@ -390,7 +393,7 @@ def drawPointCharges(app, canvas):
         canvas.create_text(currentPointCharge.cx, currentPointCharge.cy,
                 text = currentPointCharge.charge, fill = 'white')
 
-def drawFieldItem(app, canvas, x0, y0, x1, y1, direction, color):
+def drawFieldorForceItem(app, canvas, x0, y0, x1, y1, direction, color):
     angle = math.pi / 4
     errorShift = 2
     if direction == 'I':
@@ -408,28 +411,28 @@ def drawFieldItem(app, canvas, x0, y0, x1, y1, direction, color):
         yAArrow = y1 - app.optionShortLineArrowLength * math.sin(angle)
         yBArrow = y1 + app.optionShortLineArrowLength * math.sin(angle)
         canvas.create_line(x0Arrow, yAArrow, x1, y1, x0Arrow, yBArrow, 
-                fill = color)
+                fill = color, width = app.arrowThickness)
     elif direction == 'L':
         x0 += errorShift
         x1Arrow = x0 + app.optionShortLineArrowLength * math.cos(angle)
         yAArrow = y1 - app.optionShortLineArrowLength * math.sin(angle)
         yBArrow = y1 + app.optionShortLineArrowLength * math.sin(angle)
         canvas.create_line(x1Arrow, yAArrow, x0, y0, x1Arrow, yBArrow, 
-                fill = color)
+                fill = color, width = app.arrowThickness)
     elif direction == 'U':
         y0 += errorShift
         xAArrow = x0 - app.optionShortLineArrowLength * math.cos(angle)
         xBArrow = x0 + app.optionShortLineArrowLength * math.cos(angle)
         y1Arrow = y0 + app.optionShortLineArrowLength * math.sin(angle)
         canvas.create_line(xAArrow, y1Arrow, x0, y0, xBArrow, y1Arrow, 
-                fill = color)
+                fill = color, width = app.arrowThickness)
     elif direction == 'D':
         y1 -= errorShift
         xAArrow = x1 - app.optionShortLineArrowLength * math.cos(angle)
         xBArrow = x1 + app.optionShortLineArrowLength * math.cos(angle)
         y1Arrow = y1 - app.optionShortLineArrowLength * math.sin(angle)
         canvas.create_line(xAArrow, y1Arrow, x1, y1, xBArrow, y1Arrow, 
-                fill = color)
+                fill = color, width = app.arrowThickness)
 
 def drawFields(app, canvas, fieldType):
     width = app.width - app.userOptionsWidth
@@ -444,7 +447,7 @@ def drawFields(app, canvas, fieldType):
                         y0 + app.inOutSymbolMargin, 
                         x1 - app.inOutSymbolMargin, 
                         y1 - app.inOutSymbolMargin, fill = color)
-                drawFieldItem(app, canvas, x0 + app.inOutSymbolMargin, 
+                drawFieldorForceItem(app, canvas, x0 + app.inOutSymbolMargin, 
                         y0 + app.inOutSymbolMargin, 
                         x1 - app.inOutSymbolMargin, 
                         y1 - app.inOutSymbolMargin, currentField.direction, 
@@ -452,7 +455,7 @@ def drawFields(app, canvas, fieldType):
             else:
                 canvas.create_line(x0, y0, x1, y1, fill = color,
                         width = app.arrowThickness)
-                drawFieldItem(app, canvas, x0, y0, x1, y1, 
+                drawFieldorForceItem(app, canvas, x0, y0, x1, y1, 
                         currentField.direction, color)
 
 def drawDraggingObject(app, canvas):
@@ -465,8 +468,8 @@ def drawDraggingObject(app, canvas):
         canvas.create_text(cx, cy,
                 text = '+', fill = 'white')
     elif app.draggingEField != None:
-        x0 = app.draggingEField[0] - app.optionArrowLength // 2
-        x1 = x0 + app.optionArrowLength
+        x0 = app.draggingEField[0] - app.compassArrowLength // 2
+        x1 = x0 + app.compassArrowLength
         checkBoxCY = app.draggingEField[1]
         canvas.create_line(x0, checkBoxCY, x1, checkBoxCY, 
             fill = app.eArrowColor, width = app.arrowThickness)
@@ -480,8 +483,8 @@ def drawDraggingObject(app, canvas):
                 checkBoxCY + app.optionShortLineArrowLength * math.cos(angle),
                 fill = app.eArrowColor, width = app.arrowThickness)
     elif app.draggingBField != None:
-        x0 = app.draggingBField[0] - app.optionArrowLength // 2
-        x1 = x0 + app.optionArrowLength
+        x0 = app.draggingBField[0] - app.compassArrowLength // 2
+        x1 = x0 + app.compassArrowLength
         checkBoxCY = app.draggingBField[1]
         canvas.create_line(x0, checkBoxCY, x1, checkBoxCY, 
             fill = app.bArrowColor, width = app.arrowThickness)
@@ -541,3 +544,104 @@ def drawAskDataForField(app, canvas, fieldType):
             app.askCX + 120, app.askCY + 50, fill = 'white', width = 3)
     canvas.create_text(app.askCX + 75, app.askCY + 30, text = 'Submit', 
             font = 'Arial 20', anchor = 'center')
+
+def drawOriginDot(app, canvas):
+    graphicsX = Calculations.cartesianToGraphicsX(0, 
+            app.width - app.userOptionsWidth)
+    graphicsY = Calculations.cartesianToGraphicsY(0, app.height)
+    canvas.create_oval(graphicsX - 2, graphicsY - 2, 
+            graphicsX + 2, graphicsY + 2, fill = 'gray', width = 0)
+    canvas.create_text(graphicsX + 11, graphicsY + 8, text = '(0, 0)',
+            font = 'Arial 8', fill = 'gray')
+
+def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor):
+    if direction == 'U':
+        x0 = x1 = currentPC.cx
+        y1 = currentPC.cy - app.pointChargeRadius
+        y0 = y1 - app.forceArrowLength
+        canvas.create_line(x0, y0, x1, y1, fill = arrowColor, 
+                width = app.arrowThickness)
+    elif direction == 'D':
+        x0 = x1 = currentPC.cx
+        y0 = currentPC.cy + app.pointChargeRadius
+        y1 = y0 + app.forceArrowLength
+        canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
+                width = app.arrowThickness)
+    elif direction == 'R':
+        y0 = y1 = currentPC.cy
+        x0 = currentPC.cx + app.pointChargeRadius
+        x1 = x0 + app.forceArrowLength
+        if x1 > app.width - app.userOptionsWidth:
+            x1 = app.width - app.userOptionsWidth
+        canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
+                width = app.arrowThickness)
+        return
+    elif direction == 'L':
+        y0 = y1 = currentPC.cy
+        x1 = currentPC.cx - app.pointChargeRadius
+        x0 = x1 - app.forceArrowLength
+        canvas.create_line(x0, y0, x1, y1, fill = arrowColor,
+                width = app.arrowThickness)
+    else:
+        determineBoundsAndDrawForceInOrOut(app, canvas, currentPC, 
+                direction, arrowColor)
+        return
+    
+    drawFieldorForceItem(app, canvas, x0, y0, x1, y1, direction, arrowColor)
+
+def determineBoundsAndDrawForceInOrOut(app, canvas, currentPC, direction, 
+                                        arrowColor):
+    forceCircleCX = currentPC.cx - app.pointChargeRadius - app.pcToForceCircleMargin
+    forceCircleCY = currentPC.cy - app.pointChargeRadius - app.pcToForceCircleMargin
+    if isValidForceCircleLocation(app, forceCircleCX, forceCircleCY):
+        drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
+                direction, arrowColor)
+        return
+    
+    forceCircleCX = currentPC.cx + app.pointChargeRadius + app.pcToForceCircleMargin
+    if isValidForceCircleLocation(app, forceCircleCX, forceCircleCY):
+        drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
+                direction, arrowColor)
+        return
+    
+    forceCircleCX = currentPC.cx - app.pointChargeRadius - app.pcToForceCircleMargin
+    forceCircleCY = currentPC.cy + app.pointChargeRadius + app.pcToForceCircleMargin
+    # if top left and top right corners are invalid, then bottom left must be valid
+    drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
+            direction, arrowColor)
+
+def drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, direction, 
+                            arrowColor):
+    canvas.create_oval(forceCircleCX - app.forceCircleRadius,
+            forceCircleCY - app.forceCircleRadius,
+            forceCircleCX + app.forceCircleRadius,
+            forceCircleCY + app.forceCircleRadius,
+            fill = arrowColor)
+
+def isValidForceCircleLocation(app, cx, cy):
+    if cx - app.forceCircleRadius < 0:
+        return False
+    if cx + app.forceCircleRadius >= app.width - app.userOptionsWidth:
+        return False
+    if cy - app.forceCircleRadius < 0:
+        return False
+    if cy + app.forceCircleRadius >= app.height:
+        return False
+    return True
+
+def drawForceArrow(app, canvas, currentPC, direction, arrowColor, isElectric):
+    if isElectric:
+        if currentPC.charge == '-':
+            direction = PointChargeClass.PointCharge.getOppositeDirection(direction)
+        drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor)
+
+def draw1FieldForce(app, canvas, currentPC, currentField):
+    if isinstance(currentField, EFieldClass.EField):
+        drawForceArrow(app, canvas, currentPC, currentField.direction, 'pink', True)
+
+def drawFieldForces(app, canvas):
+    for currentPC in app.allPointCharges:
+        for currentEField in app.allEFields:
+            draw1FieldForce(app, canvas, currentPC, currentEField)
+        for currentBField in app.allBFields:
+            draw1FieldForce(app, canvas, currentPC, currentBField)
