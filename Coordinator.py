@@ -84,6 +84,8 @@ def reset(app):
     app.askDataFieldDirection = None
 
     app.errorMessageColor = 'Pink'
+
+    app.clickedCurrentPC = False
     
     resetMenuInfo(app)
 
@@ -456,6 +458,7 @@ def checkClickedAskSubmit(app, event):
         shouldAskSubmit(app)
 
 def clickedInMenu(app, event):
+    app.clickedCurrentPC = False
     if checkClickedMenuExit(app, event):
         return
     
@@ -542,13 +545,15 @@ def mousePressed(app, event):
             app.displayMenu = currentPC
             setDisplayMenuInfo(app)
             app.menuPointCharge = currentPC
+            app.clickedCurrentPC = True
             return
 
 def mouseDragged(app, event):
     if app.isAskDataForEField or app.isAskDataForBField:
         return
 
-    if app.menuPointCharge != None and app.displayMenu != None:
+    if (app.menuPointCharge != None and app.displayMenu != None and 
+            app.clickedCurrentPC):
         if (isValidPCRelocation(app, event.x, event.y, app.menuPointCharge) == 
                 'Works'):
             app.menuPointCharge.cx = event.x
