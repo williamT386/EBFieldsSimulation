@@ -9,7 +9,7 @@ from cmu_112_graphics import *
 
 # Sets the app constants
 def setConstants(app):
-    app.maxPointCharges = 50
+    app.maxPointCharges = 10
     app.pointChargeRadius = 12
     app.displayMenuRectWidth = 250
     app.displayMenuRectHeight = 320
@@ -25,7 +25,7 @@ def setConstants(app):
     app.eFieldsOptionYs = (160, 200)
     app.bFieldsOptionYs = (210, 250)
     app.interactionsBetweenPCOptionYs = (260, 315)
-    app.resetButtonOptionYs = (320, 360)
+    app.resetButtonOptionYs = (325, 365)
     app.showPCInteractions = False
     app.checkboxCX = app.optionsCX - app.optionsDrawingWidth // 3
     app.compassArrowLength = 30
