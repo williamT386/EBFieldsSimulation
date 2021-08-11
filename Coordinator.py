@@ -477,6 +477,9 @@ def clickedInMenu(app, event):
             app.menuSelected = 'x'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
+            if app.menuSelected != 'x':
+                return
+            
             if app.menuPCX != None and isStringParseableToInt(app.menuPCX):
                 shouldMenuPCSubmit(app)
             else:
@@ -489,6 +492,9 @@ def clickedInMenu(app, event):
             app.menuSelected = 'y'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
+            if app.menuSelected != 'y':
+                return
+            
             if app.menuPCY != None and isStringParseableToInt(app.menuPCY):
                 shouldMenuPCSubmit(app)
             else:
@@ -501,6 +507,9 @@ def clickedInMenu(app, event):
             app.menuSelected = 'Charge'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
+            if app.menuSelected != 'Charge':
+                return
+            
             if (app.menuPCCharge != None and 
                     (app.menuPCCharge == '+' or app.menuPCCharge == '-')):
                 shouldMenuPCSubmit(app)
@@ -514,6 +523,9 @@ def clickedInMenu(app, event):
             app.menuSelected = 'Velocity Direction'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
+            if app.menuSelected != 'Velocity Direction':
+                return
+            
             if (app.menuPCVelocityDirection != None and 
                     isValidDirectionEntry(app.menuPCVelocityDirection)):
                 shouldMenuPCSubmit(app)

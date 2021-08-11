@@ -370,11 +370,12 @@ def drawXMenu(app, canvas, width, height, titleCX, textboxCX,
         canvas.create_text(app.checkboxXLocation[2] - 12, 
                 (app.checkboxXLocation[1] + 5 + app.checkboxXLocation[3] - 5) // 2,
                 text = app.menuPCX, fill = 'black', anchor = 'e')
+    submitButtonColor = 'gray' if app.menuSelected != 'x' else 'white'
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
             app.checkboxXLocation[1],
             submitButtonCX + submitButtonWidth // 2,
             app.checkboxXLocation[3],
-            fill = 'white', width = 3)
+            fill = submitButtonColor, width = 3)
     canvas.create_text(submitButtonCX, 
             (app.checkboxXLocation[1] + app.checkboxXLocation[3]) // 2,
             text = 'Submit', font = 'Arial 17')
@@ -397,11 +398,12 @@ def drawYMenu(app, canvas, width, height, titleCX, textboxCX,
         canvas.create_text(app.checkboxYLocation[2] - 12, 
                 (app.checkboxYLocation[1] + 5 + app.checkboxYLocation[3] - 5) // 2,
                 text = app.menuPCY, fill = 'black', anchor = 'e')
+    submitButtonColor = 'gray' if app.menuSelected != 'y' else 'white'
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
             app.checkboxYLocation[1],
             submitButtonCX + submitButtonWidth // 2,
             app.checkboxYLocation[3],
-            fill = 'white', width = 3)
+            fill = submitButtonColor, width = 3)
     canvas.create_text(submitButtonCX, 
             (app.checkboxYLocation[1] + app.checkboxYLocation[3]) // 2,
             text = 'Submit', font = 'Arial 17')
@@ -425,11 +427,13 @@ def drawChargeMenu(app, canvas, width, height, titleCX, textboxCX,
                 (app.checkboxChargeLocation[1] + 5 + 
                 app.checkboxChargeLocation[3] - 5) // 2,
                 text = app.menuPCCharge, fill = 'black', anchor = 'e')
+    submitButtonColor = ('gray' if app.menuSelected != 'Charge' 
+            else 'white')
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
             app.checkboxChargeLocation[1],
             submitButtonCX + submitButtonWidth // 2,
             app.checkboxChargeLocation[3],
-            fill = 'white', width = 3)
+            fill = submitButtonColor, width = 3)
     canvas.create_text(submitButtonCX, 
             (app.checkboxChargeLocation[1] + app.checkboxChargeLocation[3]) // 2,
             text = 'Submit', font = 'Arial 17')
@@ -454,11 +458,13 @@ def drawVelocityDirectionMenu(app, canvas, width, height, titleCX, textboxCX,
                 app.checkboxVelocityDirectionLocation[3] - 5) // 2,
                 text = app.menuPCVelocityDirection, fill = 'black', 
                 anchor = 'e')
+    submitButtonColor = ('gray' if app.menuSelected != 'Velocity Direction' 
+            else 'white')
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
             app.checkboxVelocityDirectionLocation[1],
             submitButtonCX + submitButtonWidth // 2,
             app.checkboxVelocityDirectionLocation[3],
-            fill = 'white', width = 3)
+            fill = submitButtonColor, width = 3)
     canvas.create_text(submitButtonCX, (app.checkboxVelocityDirectionLocation[1] + 
             app.checkboxVelocityDirectionLocation[3])//2,  
             text = 'Submit', font = 'Arial 17')
