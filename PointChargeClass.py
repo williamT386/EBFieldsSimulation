@@ -6,18 +6,3 @@ class PointCharge(object):
         self.cy = cy
         self.velocityDirection = velocityDirection
         self.charge = charge
-    
-    @staticmethod
-    def getOppositeDirection(directionIn):
-        if directionIn == 'R':
-            return 'L'
-        elif directionIn == 'L':
-            return 'R'
-        elif directionIn == 'U':
-            return 'D'
-        elif directionIn == 'D':
-            return 'U'
-        elif directionIn == 'I':
-            return 'O'
-        elif directionIn == 'O':
-            return 'I'

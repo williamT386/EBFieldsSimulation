@@ -189,7 +189,7 @@ def checkClickedAskExit(app, event):
         app.isAskDataForEField = False
         app.isAskDataForBField = False
 
-def isValidDirectionEntry(app, key):
+def isValidDirectionEntry(key):
     key = key.upper()
     return (key == 'U' or key == 'D' or key == 'L' or key == 'R' or 
             key == 'I' or key == 'O')
@@ -223,66 +223,79 @@ def isStringParseableToInt(s):
 def keyPressed(app, event):
     if app.isAskDataForEField or app.isAskDataForBField:
         if event.key == 'Enter':
-                shouldAskSubmit(app)
+            shouldAskSubmit(app)
         elif event.key == 'Delete':
             if app.askDataFieldDirection != None:
                 app.askDataFieldDirection = app.askDataFieldDirection[:-1]
-        elif isValidDirectionEntry(app, event.key):
+        elif isValidDirectionEntry(event.key):
             app.askDataFieldDirection = event.key
         else:
             setErrorMessage(app, 'Please enter a valid direction.')
             app.askDataFieldDirection = None
     elif app.menuSelected == 'x':
-        if (event.key == 'Enter' and app.menuPCX != None and 
-                isStringParseableToInt(app.menuPCX)):
-            shouldMenuPCSubmit(app)
+        if event.key == 'Enter':
+            if app.menuPCX != None and isStringParseableToInt(app.menuPCX):
+                shouldMenuPCSubmit(app)
+            else:
+                setErrorMessage(app, 'Please enter a valid x.')
+                app.menuPCX = None
         elif event.key == 'Delete':
-            if app.menuPCX != None:
+            if app.menuPCX != None and app.menuPCX != '':
                 app.menuPCX = app.menuPCX[:-1]
-        elif event.key.isdigit() or event.key == '-' or event.key == '+':
+        elif (len(event.key) == 1 and event.key.isalnum() or 
+                event.key == '+' or event.key == '-'):
             if app.menuPCX == None:
                 app.menuPCX = ''
             app.menuPCX += event.key
-        else:
-            setErrorMessage(app, 'Please enter a valid x.')
-            app.menuPCX = None
     elif app.menuSelected == 'y':
-        if (event.key == 'Enter' and app.menuPCY != None and 
-                isStringParseableToInt(app.menuPCY)):
-            shouldMenuPCSubmit(app)
+        if event.key == 'Enter':
+            if app.menuPCY != None and isStringParseableToInt(app.menuPCY):
+                shouldMenuPCSubmit(app)
+            else:
+                setErrorMessage(app, 'Please enter a valid x.')
+                app.menuPCY = None
         elif event.key == 'Delete':
-            if app.menuPCY != None:
+            if app.menuPCY != None and app.menuPCY != '':
                 app.menuPCY = app.menuPCY[:-1]
-        elif event.key.isdigit() or event.key == '-' or event.key == '+':
+        elif (len(event.key) == 1 and event.key.isalnum() or 
+                event.key == '+' or event.key == '-'):
             if app.menuPCY == None:
                 app.menuPCY = ''
             app.menuPCY += event.key
-        else:
-            setErrorMessage(app, 'Please enter a valid y.')
-            app.menuPCY = None
     elif app.menuSelected == 'Charge':
-        if event.key == 'Enter' and app.menuPCCharge != None:
-            shouldMenuPCSubmit(app)
+        if event.key == 'Enter':
+            if (app.menuPCCharge != None and 
+                    (app.menuPCCharge == '+' or app.menuPCCharge == '-')):
+                shouldMenuPCSubmit(app)
+            else:
+                setErrorMessage(app, 'Please enter a valid charge.')
+                app.menuPCCharge = None
         elif event.key == 'Delete':
-            if app.menuPCCharge != None:
+            if app.menuPCCharge != None and app.menuPCCharge != '':
                 app.menuPCCharge = app.menuPCCharge[:-1]
-        elif event.key == '+' or event.key == '-':
-            app.menuPCCharge = event.key
-        else:
-            setErrorMessage(app, 'Please enter a valid charge.')
-            app.menuPCCharge = None
+        elif (len(event.key) == 1 and event.key.isalnum() or 
+                event.key == '+' or event.key == '-'):
+            if app.menuPCCharge == None:
+                app.menuPCCharge = ''
+            app.menuPCCharge += event.key
     elif app.menuSelected == 'Velocity Direction':
-        if event.key == 'Enter' and app.menuPCVelocityDirection != None:
-            shouldMenuPCSubmit(app)
+        if event.key == 'Enter':
+            #TODO: error checking direction for 2d velocity direction
+            if (app.menuPCVelocityDirection != None and 
+                    isValidDirectionEntry(app.menuPCVelocityDirection)):
+                shouldMenuPCSubmit(app)
+            else:
+                setErrorMessage(app, 'Please enter a valid velocity direction.')
+                app.menuPCVelocityDirection = None
         elif event.key == 'Delete':
-            if app.menuPCVelocityDirection != None:
+            if (app.menuPCVelocityDirection != None and 
+                    app.menuPCVelocityDirection != ''):
                 app.menuPCVelocityDirection = app.menuPCVelocityDirection[:-1]
-        #TODO: error checking direction for 2d velocity direction
-        elif isValidDirectionEntry(app, event.key): 
-            app.menuPCVelocityDirection = event.key.upper()
-        else:
-            setErrorMessage(app, 'Please enter a valid velocity direction.')
-            app.menuPCVelocityDirection = None
+        elif (len(event.key) == 1 and event.key.isalnum() or 
+                event.key == '+' or event.key == '-'):
+            if app.menuPCVelocityDirection == None:
+                app.menuPCVelocityDirection = ''
+            app.menuPCVelocityDirection += event.key
 
 # Removes the error message after 3000 ms
 def timerFired(app):
@@ -325,7 +338,7 @@ def hasDuplicateFieldInList(app, currentField, fieldList):
 def getOppositeFieldInList(app, currentField, fieldList):
     for field in fieldList:
         if (currentField.direction == 
-                PointChargeClass.PointCharge.getOppositeDirection(field.direction)):
+                Calculations.getOppositeDirection(field.direction)):
             return field
     return None
 
@@ -361,7 +374,7 @@ def shouldMenuPCSubmit(app):
         app.menuPointCharge.charge = app.menuPCCharge
         app.menuPCCharge = None
     elif app.menuSelected == 'Velocity Direction':
-        app.menuPointCharge.velocityDirection = app.menuPCVelocityDirection
+        app.menuPointCharge.velocityDirection = app.menuPCVelocityDirection.upper()
         app.menuPCVelocityDirection = None
     app.menuSelected = None
 
@@ -460,7 +473,8 @@ def clickedInMenu(app, event):
             app.menuSelected = 'Charge'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
-            if app.menuPCCharge != None:
+            if (app.menuPCCharge != None and 
+                    (app.menuPCCharge == '+' or app.menuPCCharge == '-')):
                 shouldMenuPCSubmit(app)
             else:
                 setErrorMessage(app, 'Please enter a valid charge.')
@@ -472,7 +486,8 @@ def clickedInMenu(app, event):
             app.menuSelected = 'Velocity Direction'
         elif (app.submitButtonCX - app.submitButtonWidth // 2 <= event.x <= 
                 app.submitButtonCX + app.submitButtonWidth // 2):
-            if app.menuPCVelocityDirection != None:
+            if (app.menuPCVelocityDirection != None and 
+                    isValidDirectionEntry(app.menuPCVelocityDirection)):
                 shouldMenuPCSubmit(app)
             else:
                 setErrorMessage(app, 'Please enter a valid velocity direction.')

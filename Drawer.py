@@ -417,6 +417,7 @@ def drawErrorMessage(app, canvas):
 # Draws the point charges if possible
 def drawPointCharges(app, canvas):
     for currentPC in app.allPointCharges:
+        drawVelocity(app, canvas, currentPC)
         canvas.create_oval(currentPC.cx - app.pointChargeRadius,
                 currentPC.cy - app.pointChargeRadius,
                 currentPC.cx + app.pointChargeRadius,
@@ -424,7 +425,6 @@ def drawPointCharges(app, canvas):
                 fill = app.pcColor)
         canvas.create_text(currentPC.cx, currentPC.cy,
                 text = currentPC.charge, fill = 'white')
-        drawVelocity(app, canvas, currentPC)
 
 def drawVelocity(app, canvas, currentPC):
     if currentPC.velocityDirection != None:
@@ -762,7 +762,7 @@ def draw1FieldForce(app, canvas, currentPC, currentField):
     if isinstance(currentField, EFieldClass.EField):
         direction = currentField.direction
         if currentPC.charge == '-':
-            direction = PointChargeClass.PointCharge.getOppositeDirection(
+            direction = Calculations.getOppositeDirection(
                         direction)
         drawForceArrowInDirection(app, canvas, currentPC, direction, 
                 app.eForceArrowColor)
@@ -770,7 +770,7 @@ def draw1FieldForce(app, canvas, currentPC, currentField):
         direction = Calculations.calculateBForceDirection(
                 currentPC.velocityDirection, currentField.direction)
         if currentPC.charge == '-':
-            direction = PointChargeClass.PointCharge.getOppositeDirection(
+            direction = Calculations.getOppositeDirection(
                         direction)
         # happens if there is no velocity, and no velocity means 
         #  no magnetic force

@@ -1,6 +1,20 @@
 import math
 import PointChargeClass
 
+def getOppositeDirection(directionIn):
+        if directionIn == 'R':
+            return 'L'
+        elif directionIn == 'L':
+            return 'R'
+        elif directionIn == 'U':
+            return 'D'
+        elif directionIn == 'D':
+            return 'U'
+        elif directionIn == 'I':
+            return 'O'
+        elif directionIn == 'O':
+            return 'I'
+
 def getFieldLocationsXDimension(margin, width, height,
         fieldType, direction, spaceIntoLinesDivider):
     numRows = (height - 2 * margin) // spaceIntoLinesDivider
@@ -95,11 +109,11 @@ def calculateBearingAngleBetween(xEffected, yEffected, xCause, yCause):
 
 def calculateOppositeBearingAngle(bearingIn):
     result = []
-    result.append(PointChargeClass.PointCharge.getOppositeDirection(bearingIn[0]))
+    result.append(getOppositeDirection(bearingIn[0]))
     if len(bearingIn) == 1:
         return result
     result.append(bearingIn[1])
-    result.append(PointChargeClass.PointCharge.getOppositeDirection(bearingIn[2]))
+    result.append(getOppositeDirection(bearingIn[2]))
     return result
 
 def calculateBForceDirection(velocityDirection, bFieldDirection):
