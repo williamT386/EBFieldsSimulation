@@ -84,10 +84,11 @@ def drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY,
 
 # Draws the compass
 def drawCompass(app, canvas):
-    canvas.create_rectangle(app.width - app.userOptionsWidth, app.height, 
-            app.width, app.height - app.userOptionsWidth)
+    dy = 170
+    canvas.create_line(app.width - app.userOptionsWidth, app.height - dy,
+            app.width, app.height - dy)
     allArrowsCX = app.width - app.userOptionsWidth // 2
-    allArrowsCY = app.height - app.userOptionsWidth // 2
+    allArrowsCY = app.height - dy // 2
     compassArrowLength = app.userOptionsWidth // 2 - 25
     drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY, 
             (0, -1), 'U')
@@ -101,7 +102,7 @@ def drawCompass(app, canvas):
 # Draws the options
 def drawUserOptions(app, canvas):
     canvas.create_line(app.width - app.userOptionsWidth,
-            0, app.width - app.userOptionsWidth, app.height - app.userOptionsWidth)
+            0, app.width - app.userOptionsWidth, app.height)
     
     canvas.create_text(app.optionsCX, 25, text = 'EBFields', 
             font = 'Arial 25 bold', anchor = 'center')
@@ -120,6 +121,8 @@ def drawUserOptions(app, canvas):
     drawBFieldOption(app, canvas)
     drawCheckboxInteractions(app, canvas)
     drawResetButton(app, canvas)
+
+    drawColorKey(app, canvas)
 
 # Draws the point charge option
 def drawPointChargeOption(app, canvas):
@@ -197,13 +200,32 @@ def drawCheckboxInteractions(app, canvas):
             checkBoxCY - checkBoxDimensions, 
             app.checkboxCX + checkBoxDimensions,
             checkBoxCY + checkBoxDimensions, fill = checkBoxColor)
+    if app.showPCInteractions:
+        x0 = app.checkboxCX - checkBoxDimensions + 3
+        y0 = checkBoxCY + 1
+        x1 = app.checkboxCX
+        y1 = checkBoxCY + checkBoxDimensions - 3
+        x2 = app.checkboxCX + checkBoxDimensions - 3
+        y2 = checkBoxCY - checkBoxDimensions + 3
+        canvas.create_line(x0, y0, x1, y1, x2, y2)
+        
+    else:
+        checkBoxMargin = 5
+        canvas.create_line(app.checkboxCX - checkBoxDimensions + checkBoxMargin,
+                checkBoxCY - checkBoxDimensions + checkBoxMargin, 
+                app.checkboxCX + checkBoxDimensions - checkBoxMargin,
+                checkBoxCY + checkBoxDimensions - checkBoxMargin)
+        canvas.create_line(app.checkboxCX - checkBoxDimensions + checkBoxMargin,
+                checkBoxCY + checkBoxDimensions - checkBoxMargin, 
+                app.checkboxCX + checkBoxDimensions - checkBoxMargin,
+                checkBoxCY - checkBoxDimensions + checkBoxMargin)
     textCX = ((app.checkboxCX + checkBoxDimensions // 2 + 
                 app.optionsCX + app.optionsDrawingWidth // 2)//2 + 5)
-    canvas.create_text(textCX, app.interactionsBetweenPCOptionYs[0] + 15, 
+    canvas.create_text(textCX, app.interactionsBetweenPCOptionYs[0] + 12, 
             text = 'Include electric', anchor = 'center')
-    canvas.create_text(textCX, app.interactionsBetweenPCOptionYs[0] + 30, 
+    canvas.create_text(textCX, app.interactionsBetweenPCOptionYs[0] + 27, 
             text = 'fields by point', anchor = 'center')
-    canvas.create_text(textCX, app.interactionsBetweenPCOptionYs[0] + 45, 
+    canvas.create_text(textCX, app.interactionsBetweenPCOptionYs[0] + 42, 
             text = 'charges', anchor = 'center')
 
 def drawResetButton(app, canvas):
@@ -214,6 +236,42 @@ def drawResetButton(app, canvas):
     cy = (app.resetButtonOptionYs[0] + app.resetButtonOptionYs[1]) // 2
     canvas.create_text(app.optionsCX, cy, text = 'Reset', 
             font = 'Arial 20', anchor = 'center')
+
+def drawColorKey(app, canvas):
+    yLine = app.resetButtonOptionYs[1] + 13
+    canvas.create_line(app.width - app.userOptionsWidth, yLine, app.width, yLine)
+    yTitle = yLine + 15
+    canvas.create_text(app.optionsCX, yTitle, text = 'Color Key', 
+            font = 'Arial 16', anchor = 'center')
+    
+    colorList = {app.pcColor : 'Point Charge', 
+            app.velocityArrowColor : 'Velocity Direction',
+            app.eArrowColor : 'Electric Field', 
+            app.bArrowColor : 'Magnetic Field',
+            app.eForceArrowColor : 'Electric Force',
+            app.bForceArrowColor : 'Magnetic Force',
+            app.pcEForceArrowColor : 'Electric Force from '}
+    yColorRow = yTitle + 20
+    dyBottom = 170
+    marginBottom = 10
+    yBottom = app.height - dyBottom - marginBottom - 15
+    dy = (yBottom - yColorRow) // len(colorList) + 2
+    colorRowRectDimension = 6
+
+    rectCX = app.optionsCX - app.userOptionsWidth * 0.4
+    dxToText = 8
+    for color in colorList:
+        canvas.create_rectangle(rectCX - colorRowRectDimension, 
+                yColorRow - colorRowRectDimension, 
+                rectCX + colorRowRectDimension, 
+                yColorRow + colorRowRectDimension, fill = color)
+        canvas.create_text(rectCX + colorRowRectDimension + dxToText, 
+                yColorRow, text = colorList[color], font = 'Arial 14', 
+                anchor = 'w')
+        yColorRow += dy
+    canvas.create_text(rectCX + colorRowRectDimension + dxToText, 
+            yColorRow, text = 'Point Charge', font = 'Arial 14', 
+            anchor = 'w')
 
 def drawMenuBoard(app, canvas):
     width = app.displayMenuRectWidth

@@ -21,11 +21,11 @@ def setConstants(app):
     app.optionsDrawingWidth = int(app.userOptionsWidth * 0.8)
     app.optionsSurroundingRectWidth = app.optionsDrawingWidth // 2
 
-    app.pointChargeOptionYs = (120, 180)
-    app.eFieldsOptionYs = (200, 260)
-    app.bFieldsOptionYs = (280, 340)
-    app.interactionsBetweenPCOptionYs = (360, 420)
-    app.resetButtonOptionYs = (440, 470)
+    app.pointChargeOptionYs = (110, 150)
+    app.eFieldsOptionYs = (160, 200)
+    app.bFieldsOptionYs = (210, 250)
+    app.interactionsBetweenPCOptionYs = (260, 315)
+    app.resetButtonOptionYs = (320, 360)
     app.showPCInteractions = False
     app.checkboxCX = app.optionsCX - app.optionsDrawingWidth // 3
     app.compassArrowLength = 30
@@ -70,6 +70,7 @@ def reset(app):
     app.allBFields = []
     app.errorMessage = None
     app.errorMessageTimer = None
+    app.displayMenuHalf = False
 
     app.draggingPCOption = False
     app.draggingEFieldOption = False
@@ -114,13 +115,13 @@ def setDisplayMenuInfo(app):
     rectHeight = app.displayMenuRectHeight
     margin = 10
     radius = app.pointChargeRadius
-
-    app.displayMenuRectCX = app.displayMenu.cx
-    if app.displayMenuRectCX + rectWidth / 2 >= app.width:
-        app.displayMenuRectCX = app.displayMenu.cx - rectWidth / 2 - margin
-    elif app.displayMenuRectCX - rectWidth / 2 < 0:
-        app.displayMenuRectCX = app.displayMenu.cx + rectWidth / 2 - margin
     
+    app.displayMenuRectCX = app.displayMenu.cx
+    if app.displayMenuRectCX + rectWidth // 2 >= app.width:
+        app.displayMenuRectCX = app.displayMenu.cx - rectWidth / 2 - margin
+    elif app.displayMenuRectCX - rectWidth // 2 < 0:
+        app.displayMenuRectCX = app.displayMenu.cx + rectWidth / 2 - margin
+
     app.displayMenuRectCY = app.displayMenu.cy - rectHeight // 2 - margin - radius
     if app.displayMenuRectCY - rectHeight // 2 < 0:
         app.displayMenuRectCY = app.displayMenu.cy + rectHeight // 2 + margin + radius
@@ -312,13 +313,13 @@ def timerFired(app):
             app.errorMessageTimer = None
 
 def clickedInOptionPane(app, event):
-    if (app.optionsCX - app.optionsSurroundingRectWidth <= event.x <= 
-            app.optionsCX + app.optionsSurroundingRectWidth and 
+    if (app.optionsCX - app.optionsSurroundingRectWidth // 2 <= event.x <= 
+            app.optionsCX + app.optionsSurroundingRectWidth // 2 and 
             app.resetButtonOptionYs[0] <= event.y <= app.resetButtonOptionYs[1]):
         Calculations.writeToLogFile(f'Reset\n')
         reset(app)
-    elif(app.optionsCX - app.optionsDrawingWidth <= event.x <= 
-            app.optionsCX + app.optionsDrawingWidth):
+    elif(app.optionsCX - app.optionsDrawingWidth // 2 <= event.x <= 
+            app.optionsCX + app.optionsDrawingWidth // 2):
         # point charge option
         if(app.pointChargeOptionYs[0] <= event.y <= 
                 app.pointChargeOptionYs[1]):
@@ -547,7 +548,14 @@ def mouseDragged(app, event):
     if app.isAskDataForEField or app.isAskDataForBField:
         return
 
-    if app.draggingPCOption:
+    if app.menuPointCharge != None and app.displayMenu != None:
+        if (isValidPCRelocation(app, event.x, event.y, app.menuPointCharge) == 
+                'Works'):
+            app.menuPointCharge.cx = event.x
+            app.menuPointCharge.cy = event.y
+            app.displayMenuHalf = True
+            setDisplayMenuInfo(app)
+    elif app.draggingPCOption:
         app.draggingPC = (event.x, event.y)
     elif app.draggingEFieldOption:
         app.draggingEField = (event.x, event.y)
