@@ -1,3 +1,8 @@
+'''
+William Tang (wyt)
+Created 7/6/2021
+'''
+
 import FieldClass
 class BField(FieldClass.Field):
     def __init__(self, direction = None):

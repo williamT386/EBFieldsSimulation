@@ -1,3 +1,8 @@
+'''
+William Tang (wyt)
+Created 7/8/2021
+'''
+
 from cmu_112_graphics import *
 import math
 import PointChargeClass, EFieldClass, BFieldClass, Calculations

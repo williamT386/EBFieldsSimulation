@@ -1,10 +1,15 @@
+'''
+William Tang (wyt)
+Created 7/6/2021
+'''
+
 import PointChargeClass, EFieldClass, BFieldClass, Calculations, Drawer
 import math
 from cmu_112_graphics import *
 
 # Sets the app constants
 def setConstants(app):
-    app.maxPointCharges = 5
+    app.maxPointCharges = 50
     app.pointChargeRadius = 12
     app.displayMenuRectWidth = 250
     app.displayMenuRectHeight = 320
@@ -55,6 +60,7 @@ def setConstants(app):
     app.forceCircleRadius = 7
 
 def appStarted(app):
+    Calculations.writeToLogFile("\nStart\n")
     setConstants(app)
     reset(app)
 
@@ -309,6 +315,7 @@ def clickedInOptionPane(app, event):
     if (app.optionsCX - app.optionsSurroundingRectWidth <= event.x <= 
             app.optionsCX + app.optionsSurroundingRectWidth and 
             app.resetButtonOptionYs[0] <= event.y <= app.resetButtonOptionYs[1]):
+        Calculations.writeToLogFile(f'Reset\n')
         reset(app)
     elif(app.optionsCX - app.optionsDrawingWidth <= event.x <= 
             app.optionsCX + app.optionsDrawingWidth):
@@ -328,6 +335,7 @@ def clickedInOptionPane(app, event):
         elif(app.interactionsBetweenPCOptionYs[0] <= event.y <= 
                 app.interactionsBetweenPCOptionYs[1]):
             app.showPCInteractions = not app.showPCInteractions
+            Calculations.writeToLogFile(f'Set interactions to {app.showPCInteractions}')
 
 def hasDuplicateFieldInList(app, currentField, fieldList):
     for field in fieldList:
@@ -350,6 +358,10 @@ def shouldMenuPCSubmit(app):
                 app.menuPointCharge)
         if doesWork == 'Works':
             app.menuPointCharge.cx = cartesianX
+            tempIndex = app.allPointCharges.index(app.menuPointCharge)
+            Calculations.writeToLogFile(f'Moving point charge {tempIndex} to (' + 
+            f'{Calculations.graphicsToCartesianX(app.menuPointCharge.cx, app.width - app.userOptionsWidth)},' + 
+            f'{Calculations.graphicsToCartesianY(app.menuPointCharge.cy, app.height)})\n')
             app.menuPCX = None
             setDisplayMenuInfo(app)
         elif doesWork == 'Error 1':
@@ -364,6 +376,10 @@ def shouldMenuPCSubmit(app):
                 app.menuPointCharge)
         if doesWork == 'Works':
             app.menuPointCharge.cy = cartesianY
+            tempIndex = app.allPointCharges.index(app.menuPointCharge)
+            Calculations.writeToLogFile(f'Moving point charge {tempIndex} to (' + 
+            f'{Calculations.graphicsToCartesianX(app.menuPointCharge.cx, app.width - app.userOptionsWidth)},' + 
+            f'{Calculations.graphicsToCartesianY(app.menuPointCharge.cy, app.height)})\n')
             app.menuPCY = None
             setDisplayMenuInfo(app)
         elif doesWork == 'Error 1':
@@ -372,9 +388,13 @@ def shouldMenuPCSubmit(app):
             setErrorMessage(app, 'Location collides with another point charge.')
     elif app.menuSelected == 'Charge':
         app.menuPointCharge.charge = app.menuPCCharge
+        tempIndex = app.allPointCharges.index(app.menuPointCharge)
+        Calculations.writeToLogFile(f'Changed charge {tempIndex} to {app.menuPCCharge}\n')
         app.menuPCCharge = None
     elif app.menuSelected == 'Velocity Direction':
         app.menuPointCharge.velocityDirection = app.menuPCVelocityDirection.upper()
+        tempIndex = app.allPointCharges.index(app.menuPointCharge)
+        Calculations.writeToLogFile(f'Changed velocity direction {tempIndex} to {app.menuPCVelocityDirection.upper()}\n')
         app.menuPCVelocityDirection = None
     app.menuSelected = None
 
@@ -404,6 +424,7 @@ def shouldAskSubmit(app):
             app.errorMessageTextAndRectWidth = 640
         elif not hasDuplicateFieldInList(app, currentEField, app.allEFields):
             app.allEFields.append(currentEField)
+            Calculations.writeToLogFile(f'Added EField in {currentEField.direction}\n')
         else:
             setErrorMessage(app, 'This field already exists, so ' + 
                     'it will not be added to the simulation.')
@@ -421,6 +442,7 @@ def shouldAskSubmit(app):
             app.errorMessageTextAndRectWidth = 640
         elif not hasDuplicateFieldInList(app, currentBField, app.allBFields):
             addBFieldToBList(app, currentBField)
+            Calculations.writeToLogFile(f'Added BField in {currentBField.direction}\n')
         else:
             setErrorMessage(app, 'This field already exists, so ' + 
                     'it will not be added to the simulation.')
@@ -439,6 +461,8 @@ def clickedInMenu(app, event):
     if (app.deleteButtonLocation[0] <= event.x <= app.deleteButtonLocation[2] and
             app.deleteButtonLocation[1] <= event.y <= app.deleteButtonLocation[3]):
         app.allPointCharges.remove(app.menuPointCharge)
+        tempIndex = len(app.allPointCharges)
+        Calculations.writeToLogFile(f'Deleted point charge {tempIndex}\n')
         resetMenuInfo(app)
         return
 
@@ -559,9 +583,13 @@ def addPC(app, event):
     app.allPointCharges.append(newPointCharge)
     app.draggingPCOption = False
     app.draggingPC = None
+    tempIndex = len(app.allPointCharges) - 1
+    Calculations.writeToLogFile(f'Adding point charge {tempIndex} at (' + 
+            f'{Calculations.graphicsToCartesianX(event.x, app.width - app.userOptionsWidth)},' + 
+            f'{Calculations.graphicsToCartesianY(event.y, app.height)})\n')
 
 def mouseReleased(app, event):
-    if app.draggingPC != None:
+    if app.draggingPCOption:
         addPC(app, event)
     elif app.draggingEField != None:
         app.isAskDataForEField = True

@@ -1,3 +1,8 @@
+'''
+William Tang (wyt)
+Created 7/6/2021
+'''
+
 import math
 import PointChargeClass
 
@@ -153,3 +158,11 @@ def calculateBForceDirection(velocityDirection, bFieldDirection):
         elif bFieldDirection == 'U': return 'R'
         elif bFieldDirection == 'D': return 'L'
         else: return None
+
+# Adapted from Mike Taylor's lectures
+# CITATION: "a" parameter for open() from 
+#  https://docs.python.org/3/library/functions.html#open
+def writeToLogFile(contents):
+    path = 'PerformanceLog.txt'
+    with open(path, "a") as f:
+        f.write(contents)

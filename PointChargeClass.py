@@ -1,3 +1,8 @@
+'''
+William Tang (wyt)
+Created 7/6/2021
+'''
+
 class PointCharge(object):
     def __init__(self, cx, cy, velocityDirection = None, 
             charge = '+'):
