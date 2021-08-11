@@ -9,18 +9,19 @@ def drawAll(app, canvas):
     drawFields(app, canvas, 'B')
 
     drawOriginDot(app, canvas)
-    drawErrorMessage(app, canvas)
-    drawDraggingObject(app, canvas)
     
     drawPCInteractions(app, canvas)
-    drawFieldForces(app, canvas)
+    drawEFieldForces(app, canvas)
     drawPointCharges(app, canvas)
+    drawBFieldForces(app, canvas)
     drawMenu(app, canvas)
     if app.isAskDataForEField:
         drawAskDataForField(app, canvas, 'Electric')
     elif app.isAskDataForBField:
         drawAskDataForField(app, canvas, 'Magnetic')
     
+    drawErrorMessage(app, canvas)
+    drawDraggingObject(app, canvas)
 
 # Returns the location to set the menu
 def getMenuLocations(app):
@@ -451,7 +452,6 @@ def determineBoundsAndDrawVelocityInOrOut(app, canvas, currentPC,
     drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
                 direction, arrowColor)
 
-
 def drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, color):
     angle = math.pi / 4
     if direction == 'I':
@@ -758,27 +758,55 @@ def isValidForceCircleLocation(app, cx, cy):
         return False
     return True
 
-def drawForceArrow(app, canvas, currentPC, direction, arrowColor, isElectric):
-    if isElectric:
-        if currentPC.charge == '-':
-            direction = PointChargeClass.PointCharge.getOppositeDirection(direction)
-        drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor)
-    else:
-        #TODO: draw magnetic forces
-        pass
-
 def draw1FieldForce(app, canvas, currentPC, currentField):
     if isinstance(currentField, EFieldClass.EField):
-        drawForceArrow(app, canvas, currentPC, currentField.direction, 
-                app.eForceArrowColor, True)
+        direction = currentField.direction
+        if currentPC.charge == '-':
+            direction = PointChargeClass.PointCharge.getOppositeDirection(
+                        direction)
+        drawForceArrowInDirection(app, canvas, currentPC, direction, 
+                app.eForceArrowColor)
     else:
-        drawForceArrow(app, canvas, currentPC, currentField.direction, 
-                app.bForceArrowColor, False)
+        direction = Calculations.calculateBForceDirection(
+                currentPC.velocityDirection, currentField.direction)
+        if currentPC.charge == '-':
+            direction = PointChargeClass.PointCharge.getOppositeDirection(
+                        direction)
+        # happens if there is no velocity, and no velocity means 
+        #  no magnetic force
+        if direction == None:
+            return
+        
+        if direction == 'I' or direction == 'O':
+            determineBoundsAndDrawBFieldInOrOut(app, canvas, currentPC,
+                    direction, app.bForceArrowColor)
+        else:
+            drawForceArrowInDirection(app, canvas, currentPC, direction, 
+                    app.bForceArrowColor)
 
-def drawFieldForces(app, canvas):
+# only draw B field in or out circle along y axis of point charge
+def determineBoundsAndDrawBFieldInOrOut(app, canvas, currentPC, 
+                    direction, arrowColor):
+    forceCircleCX = currentPC.cx
+    forceCircleCY = (currentPC.cy - app.pointChargeRadius - 
+            app.pcToForceCircleMargin * 2)
+    if isValidForceCircleLocation(app, forceCircleCX, forceCircleCY):
+        drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
+                direction, arrowColor)
+        return
+    
+    forceCircleCY = (currentPC.cy + app.pointChargeRadius + 
+            app.pcToForceCircleMargin * 2)
+    drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
+                direction, arrowColor)
+
+def drawEFieldForces(app, canvas):
     for currentPC in app.allPointCharges:
         for currentEField in app.allEFields:
             draw1FieldForce(app, canvas, currentPC, currentEField)
+
+def drawBFieldForces(app, canvas):
+    for currentPC in app.allPointCharges:
         for currentBField in app.allBFields:
             draw1FieldForce(app, canvas, currentPC, currentBField)
 

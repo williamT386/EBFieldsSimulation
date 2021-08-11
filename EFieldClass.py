@@ -1,4 +1,5 @@
-class EField(object):
+import FieldClass
+class EField(FieldClass.Field):
     def __init__(self, direction = None):
         self.direction = direction
     

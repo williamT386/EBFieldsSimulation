@@ -34,7 +34,7 @@ def setConstants(app):
     app.eArrowColor = 'Dark Blue'
     app.bArrowColor = 'Dark Red'
     app.eForceArrowColor = 'Pink'
-    app.bForceArrowColor = 'Yellow'
+    app.bForceArrowColor = 'Maroon1'
     app.pcEForceArrowColor = 'Purple'
     app.velocityArrowColor = 'Orange'
     
@@ -365,6 +365,14 @@ def shouldMenuPCSubmit(app):
         app.menuPCVelocityDirection = None
     app.menuSelected = None
 
+def addBFieldToBList(app, currentBField):
+    for index in range(0, len(app.allBFields)):
+        if (app.allBFields[index].direction != 'I' and
+                app.allBFields[index].direction != 'O'):
+            app.allBFields.insert(index, currentBField)
+            return
+    app.allBFields.append(currentBField)
+
 def shouldAskSubmit(app):
     if app.askDataFieldDirection == None:
         setErrorMessage(app, 'Please enter a field direction.')
@@ -399,7 +407,7 @@ def shouldAskSubmit(app):
             app.errorMessageColor = 'Light green'
             app.errorMessageTextAndRectWidth = 640
         elif not hasDuplicateFieldInList(app, currentBField, app.allBFields):
-            app.allBFields.append(currentBField)
+            addBFieldToBList(app, currentBField)
         else:
             setErrorMessage(app, 'This field already exists, so ' + 
                     'it will not be added to the simulation.')

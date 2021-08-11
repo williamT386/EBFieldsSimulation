@@ -101,3 +101,41 @@ def calculateOppositeBearingAngle(bearingIn):
     result.append(bearingIn[1])
     result.append(PointChargeClass.PointCharge.getOppositeDirection(bearingIn[2]))
     return result
+
+def calculateBForceDirection(velocityDirection, bFieldDirection):
+    if velocityDirection == 'U':
+        if bFieldDirection == 'L': return 'O'
+        elif bFieldDirection == 'R': return 'I'
+        elif bFieldDirection == 'O': return 'R'
+        elif bFieldDirection == 'I': return 'L'
+        else: return None
+    elif velocityDirection == 'D':
+        if bFieldDirection == 'L': return 'I'
+        elif bFieldDirection == 'R': return 'O'
+        elif bFieldDirection == 'O': return 'L'
+        elif bFieldDirection == 'I': return 'R'
+        else: return None
+    elif velocityDirection == 'L':
+        if bFieldDirection == 'U': return 'I'
+        elif bFieldDirection == 'D': return 'O'
+        elif bFieldDirection == 'O': return 'U'
+        elif bFieldDirection == 'I': return 'D'
+        else: return None
+    elif velocityDirection == 'R':
+        if bFieldDirection == 'U': return 'O'
+        elif bFieldDirection == 'D': return 'I'
+        elif bFieldDirection == 'O': return 'D'
+        elif bFieldDirection == 'I': return 'U'
+        else: return None
+    elif velocityDirection == 'O':
+        if bFieldDirection == 'L': return 'D'
+        elif bFieldDirection == 'R': return 'U'
+        elif bFieldDirection == 'U': return 'L'
+        elif bFieldDirection == 'D': return 'R'
+        else: return None
+    elif velocityDirection == 'I':
+        if bFieldDirection == 'L': return 'U'
+        elif bFieldDirection == 'R': return 'D'
+        elif bFieldDirection == 'U': return 'R'
+        elif bFieldDirection == 'D': return 'L'
+        else: return None
