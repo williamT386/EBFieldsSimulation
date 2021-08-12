@@ -125,9 +125,11 @@ def setDisplayMenuInfo(app):
     elif app.displayMenuRectCX - rectWidth // 2 < 0:
         app.displayMenuRectCX = app.displayMenu.cx + rectWidth / 2 - margin
 
-    app.displayMenuRectCY = app.displayMenu.cy - rectHeight // 2 - margin - radius
+    app.displayMenuRectCY = (app.displayMenu.cy - rectHeight // 2 - margin - 
+                                radius)
     if app.displayMenuRectCY - rectHeight // 2 < 0:
-        app.displayMenuRectCY = app.displayMenu.cy + rectHeight // 2 + margin + radius
+        app.displayMenuRectCY = (app.displayMenu.cy + rectHeight // 2 + margin + 
+                                radius)
     
     app.checkboxXLocation = (
             app.displayMenuRectCX - app.displayMenuRectWidth // 2 + 15,
@@ -168,8 +170,8 @@ def setDisplayMenuInfo(app):
 def checkClickedOutOfMenu(app, event):
     if app.displayMenu != None:
         menuCX, menuCY, menuWidth, menuHeight = Drawer.getMenuLocations(app)
-        if not (menuCX - menuWidth // 2 <= event.x <= menuCX + menuWidth // 2 and 
-                menuCY - menuHeight // 2 <= event.y <= menuCY + menuHeight // 2):
+        if not (menuCX - menuWidth//2 <= event.x <= menuCX + menuWidth//2 and 
+                menuCY - menuHeight//2 <= event.y <= menuCY + menuHeight//2):
             app.displayMenu = None
             return False
         return True
@@ -180,8 +182,10 @@ def checkClickedMenuExit(app, event):
     if app.displayMenu != None:
         menuCX, menuCY, menuWidth, menuHeight = Drawer.getMenuLocations(app)
         exitDimensions = app.menuExitDimensions
-        if (menuCX + menuWidth // 2 - exitDimensions <= event.x <= menuCX + menuWidth // 2 and 
-                menuCY - menuHeight // 2 <= event.y <= menuCY - menuHeight // 2 + exitDimensions):
+        if (menuCX + menuWidth // 2 - exitDimensions <= event.x <= 
+                menuCX + menuWidth // 2 and 
+                menuCY - menuHeight // 2 <= event.y <= 
+                menuCY - menuHeight // 2 + exitDimensions):
             app.displayMenu = None
             return True
     return False
@@ -197,8 +201,7 @@ def checkClickedAskExit(app, event):
 
 def isValidDirectionEntry(key):
     key = key.upper()
-    return (key == 'U' or key == 'D' or key == 'L' or key == 'R' or 
-            key == 'I' or key == 'O')
+    return key in {'U', 'D', 'L', 'R', 'I', 'O'}
 
 def isValidPCRelocation(app, x, y, movingPC):
     if (0 > x - app.pointChargeRadius or 
@@ -314,7 +317,8 @@ def timerFired(app):
 def clickedInOptionPane(app, event):
     if (app.optionsCX - app.optionsSurroundingRectWidth // 2 <= event.x <= 
             app.optionsCX + app.optionsSurroundingRectWidth // 2 and 
-            app.resetButtonOptionYs[0] <= event.y <= app.resetButtonOptionYs[1]):
+            app.resetButtonOptionYs[0] <= event.y <= 
+            app.resetButtonOptionYs[1]):
         Calculations.writeToLogFile(f'Reset\n')
         reset(app)
     elif(app.optionsCX - app.optionsDrawingWidth // 2 <= event.x <= 
@@ -359,12 +363,12 @@ def shouldMenuPCSubmit(app):
                 app.menuPointCharge)
         if doesWork == 'Works':
             app.menuPointCharge.cx = cartesianX
-            tempIndex = app.allPointCharges.index(app.menuPointCharge)
+            tempIndex = app.allPointCharges.index(app.menuPointCharge) + 1
             graphicsCX = Calculations.graphicsToCartesianX(
                         app.menuPointCharge.cx, app.boardWidth)
             graphicsCY = Calculations.graphicsToCartesianY(
                         app.menuPointCharge.cy, app.height)
-            Calculations.writeToLogFile(f'Moving point charge {tempIndex} to ' + 
+            Calculations.writeToLogFile(f'Moving point charge #{tempIndex} to ' + 
                     f'({graphicsCX}, {graphicsCY})\n')
             app.menuPCX = None
             setDisplayMenuInfo(app)
@@ -380,12 +384,12 @@ def shouldMenuPCSubmit(app):
                 app.menuPointCharge)
         if doesWork == 'Works':
             app.menuPointCharge.cy = cartesianY
-            tempIndex = app.allPointCharges.index(app.menuPointCharge)
+            tempIndex = app.allPointCharges.index(app.menuPointCharge) + 1
             graphicsCX = Calculations.graphicsToCartesianX(
                         app.menuPointCharge.cx, app.boardWidth)
             graphicsCY = Calculations.graphicsToCartesianY(
                         app.menuPointCharge.cy, app.height)
-            Calculations.writeToLogFile(f'Moving point charge {tempIndex} to ' + 
+            Calculations.writeToLogFile(f'Moving point charge #{tempIndex} to ' + 
                     f'({graphicsCX}, {graphicsCY})\n')
             app.menuPCY = None
             setDisplayMenuInfo(app)
@@ -395,15 +399,16 @@ def shouldMenuPCSubmit(app):
             setErrorMessage(app, 'Location collides with another point charge.')
     elif app.menuSelected == 'Charge':
         app.menuPointCharge.charge = app.menuPCCharge
-        tempIndex = app.allPointCharges.index(app.menuPointCharge)
-        Calculations.writeToLogFile(f'Changed charge {tempIndex} to ' + 
+        tempIndex = app.allPointCharges.index(app.menuPointCharge) + 1
+        Calculations.writeToLogFile(f'Changed charge #{tempIndex} to ' + 
                 f'{app.menuPCCharge}\n')
         app.menuPCCharge = None
     elif app.menuSelected == 'Velocity Direction':
-        app.menuPointCharge.velocityDirection = app.menuPCVelocityDirection.upper()
-        tempIndex = app.allPointCharges.index(app.menuPointCharge)
-        Calculations.writeToLogFile(f'Changed velocity direction {tempIndex} to ' + 
-                f'{app.menuPCVelocityDirection.upper()}\n')
+        app.menuPointCharge.velocityDirection = (
+                app.menuPCVelocityDirection.upper())
+        tempIndex = app.allPointCharges.index(app.menuPointCharge) + 1
+        Calculations.writeToLogFile(f'Changed velocity direction #{tempIndex} ' + 
+                f'to {app.menuPCVelocityDirection.upper()}\n')
         app.menuPCVelocityDirection = None
     app.menuSelected = None
 
@@ -423,7 +428,8 @@ def shouldAskSubmit(app):
     if app.isAskDataForEField:
         app.isAskDataForEField = False
         currentEField = EFieldClass.EField(app.askDataFieldDirection)
-        oppositeField = getOppositeFieldInList(app, currentEField, app.allEFields)
+        oppositeField = getOppositeFieldInList(app, currentEField, 
+                app.allEFields)
         if oppositeField != None:
             app.allEFields.remove(oppositeField)
             setErrorMessage(app, 'The same field in the opposite direction ' + 
@@ -442,7 +448,8 @@ def shouldAskSubmit(app):
     else:
         app.isAskDataForBField = False
         currentBField = BFieldClass.BField(app.askDataFieldDirection)
-        oppositeField = getOppositeFieldInList(app, currentBField, app.allBFields)
+        oppositeField = getOppositeFieldInList(app, currentBField, 
+                app.allBFields)
         if oppositeField != None:
             app.allBFields.remove(oppositeField)
             setErrorMessage(app, 'The same field in the opposite direction ' + 
@@ -470,11 +477,13 @@ def clickedInMenu(app, event):
     if checkClickedMenuExit(app, event):
         return
     
-    if (app.deleteButtonLocation[0] <= event.x <= app.deleteButtonLocation[2] and
-            app.deleteButtonLocation[1] <= event.y <= app.deleteButtonLocation[3]):
+    if (app.deleteButtonLocation[0] <= event.x <= 
+            app.deleteButtonLocation[2] and
+            app.deleteButtonLocation[1] <= event.y <= 
+            app.deleteButtonLocation[3]):
         app.allPointCharges.remove(app.menuPointCharge)
-        tempIndex = len(app.allPointCharges)
-        Calculations.writeToLogFile(f'Deleted point charge {tempIndex}\n')
+        tempIndex = len(app.allPointCharges) + 1
+        Calculations.writeToLogFile(f'Deleted point charge #{tempIndex}\n')
         resetMenuInfo(app)
         return
 
@@ -616,8 +625,8 @@ def addPC(app, event):
     app.allPointCharges.append(newPointCharge)
     app.draggingPCOption = False
     app.draggingPC = None
-    tempIndex = len(app.allPointCharges) - 1
-    Calculations.writeToLogFile(f'Added point charge {tempIndex} at (' + 
+    tempIndex = len(app.allPointCharges)
+    Calculations.writeToLogFile(f'Added point charge #{tempIndex} at (' + 
             f'{Calculations.graphicsToCartesianX(event.x, app.boardWidth)}, ' + 
             f'{Calculations.graphicsToCartesianY(event.y, app.height)})\n')
 
@@ -625,12 +634,12 @@ def mouseReleased(app, event):
     if (app.menuPointCharge != None and app.displayMenu != None and 
             app.clickedCurrentPC):
         app.clickedCurrentPC = False
-        tempIndex = app.allPointCharges.index(app.menuPointCharge)
+        tempIndex = app.allPointCharges.index(app.menuPointCharge) + 1
         graphicsCX = Calculations.graphicsToCartesianX(
                 app.menuPointCharge.cx, app.boardWidth)
         graphicsCY = Calculations.graphicsToCartesianY(
                 app.menuPointCharge.cy, app.height)
-        Calculations.writeToLogFile(f'Moved point charge {tempIndex} to ' + 
+        Calculations.writeToLogFile(f'Moved point charge #{tempIndex} to ' + 
                 f'({graphicsCX}, {graphicsCY})\n')
 
     if app.draggingPCOption:

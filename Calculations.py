@@ -122,7 +122,9 @@ def calculateBForceDirection(velocityDirection, bFieldDirection):
     outVelocityDirection = {'L' : 'D', 'R' : 'U', 'U' : 'L', 'D' : 'R'}
     inVelocityDirection = {'L' : 'U', 'R' : 'D', 'U' : 'R', 'D' : 'L'}
 
-    allVelocityDirections = {'U' : upVelocityDirection, 'D' : downVelocityDirection,
+    allVelocityDirections = {
+            'U' : upVelocityDirection, 
+            'D' : downVelocityDirection,
             'L' : leftVelocityDirection, 'R' : rightVelocityDirection,
             'O' : outVelocityDirection, 'I' : inVelocityDirection}
 

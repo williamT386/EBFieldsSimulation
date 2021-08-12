@@ -227,7 +227,7 @@ def drawCheckboxInteractions(app, canvas):
             text = 'charges', anchor = 'center')
 
 def drawResetButton(app, canvas):
-    canvas.create_rectangle(app.optionsCX - app.optionsSurroundingRectWidth // 2,
+    canvas.create_rectangle(app.optionsCX - app.optionsSurroundingRectWidth//2,
             app.resetButtonOptionYs[0], 
             app.optionsCX + app.optionsSurroundingRectWidth // 2,
             app.resetButtonOptionYs[1], width = 3)
@@ -347,7 +347,8 @@ def drawMenuDisplayInformation(app, canvas, width, height, titleCX):
             text = f'Charge: {app.menuPointCharge.charge}', fill = 'white', 
             font = 'Arial 17', anchor = 'w')
     canvas.create_text(titleCX, app.checkboxXLocation[1] - 29, 
-            text = f'Velocity Direction: {app.menuPointCharge.velocityDirection}', 
+            text = f'Velocity Direction: ' + 
+                    f'{app.menuPointCharge.velocityDirection}', 
             fill = 'white', font = 'Arial 17', anchor = 'w')
 
 def drawXMenu(app, canvas, width, height, titleCX, textboxCX,
@@ -366,7 +367,7 @@ def drawXMenu(app, canvas, width, height, titleCX, textboxCX,
                 app.checkboxXLocation[3] - 5, width = 2)
     if app.menuPCX != None:
         canvas.create_text(app.checkboxXLocation[2] - 12, 
-                (app.checkboxXLocation[1] + 5 + app.checkboxXLocation[3] - 5) // 2,
+                (app.checkboxXLocation[1] + app.checkboxXLocation[3]) // 2,
                 text = app.menuPCX, fill = 'black', anchor = 'e')
     submitButtonColor = 'gray' if app.menuSelected != 'x' else 'white'
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
@@ -394,7 +395,7 @@ def drawYMenu(app, canvas, width, height, titleCX, textboxCX,
                 app.checkboxYLocation[3] - 5, width = 2)
     if app.menuPCY != None:
         canvas.create_text(app.checkboxYLocation[2] - 12, 
-                (app.checkboxYLocation[1] + 5 + app.checkboxYLocation[3] - 5) // 2,
+                (app.checkboxYLocation[1] + app.checkboxYLocation[3]) // 2,
                 text = app.menuPCY, fill = 'black', anchor = 'e')
     submitButtonColor = 'gray' if app.menuSelected != 'y' else 'white'
     canvas.create_rectangle(submitButtonCX - submitButtonWidth // 2,
@@ -433,7 +434,7 @@ def drawChargeMenu(app, canvas, width, height, titleCX, textboxCX,
             app.checkboxChargeLocation[3],
             fill = submitButtonColor, width = 3)
     canvas.create_text(submitButtonCX, 
-            (app.checkboxChargeLocation[1] + app.checkboxChargeLocation[3]) // 2,
+            (app.checkboxChargeLocation[1] + app.checkboxChargeLocation[3])//2,
             text = 'Submit', font = 'Arial 17')
 
 def drawVelocityDirectionMenu(app, canvas, width, height, titleCX, textboxCX,
@@ -463,9 +464,10 @@ def drawVelocityDirectionMenu(app, canvas, width, height, titleCX, textboxCX,
             submitButtonCX + submitButtonWidth // 2,
             app.checkboxVelocityDirectionLocation[3],
             fill = submitButtonColor, width = 3)
-    canvas.create_text(submitButtonCX, (app.checkboxVelocityDirectionLocation[1] + 
-            app.checkboxVelocityDirectionLocation[3])//2,  
-            text = 'Submit', font = 'Arial 17')
+    submitTextY = (app.checkboxVelocityDirectionLocation[1] + 
+            app.checkboxVelocityDirectionLocation[3])//2
+    canvas.create_text(submitButtonCX, submitTextY, text = 'Submit', 
+            font = 'Arial 17')
 
 # Draws the error message if possible
 def drawErrorMessage(app, canvas):
@@ -473,13 +475,14 @@ def drawErrorMessage(app, canvas):
         textAndRectCX = app.width // 2
         textAndRectCY = app.height - 100
         textAndRectHeight = 30
-        canvas.create_rectangle(textAndRectCX - app.errorMessageTextAndRectWidth // 2, 
+        canvas.create_rectangle((textAndRectCX - 
+                app.errorMessageTextAndRectWidth // 2), 
                 textAndRectCY - textAndRectHeight // 2,
                 textAndRectCX + app.errorMessageTextAndRectWidth // 2,
                 textAndRectCY + textAndRectHeight // 2,
                 fill = app.errorMessageColor)
-        canvas.create_text(textAndRectCX, textAndRectCY, text = app.errorMessage,
-                anchor = 'center')
+        canvas.create_text(textAndRectCX, textAndRectCY, 
+                text = app.errorMessage, anchor = 'center')
 
 # Draws the point charges if possible
 def drawPointCharges(app, canvas):
@@ -495,7 +498,8 @@ def drawPointCharges(app, canvas):
 
 def drawVelocity(app, canvas, currentPC):
     if currentPC.velocityDirection != None:
-        if currentPC.velocityDirection == 'I' or currentPC.velocityDirection == 'O':
+        if (currentPC.velocityDirection == 'I' or 
+                currentPC.velocityDirection == 'O'):
             determineBoundsAndDrawVelocityInOrOut(app, canvas, currentPC, 
                     currentPC.velocityDirection, app.velocityArrowColor)
         else:
@@ -519,7 +523,8 @@ def determineBoundsAndDrawVelocityInOrOut(app, canvas, currentPC,
     drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
                 direction, arrowColor)
 
-def drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, color):
+def drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, 
+                                    color):
     angle = math.pi / 4
     if direction == 'I':
         crossMargin = 6
@@ -572,7 +577,8 @@ def drawFields(app, canvas, fieldType):
                         y0 + app.inOutSymbolMargin, 
                         x1 - app.inOutSymbolMargin, 
                         y1 - app.inOutSymbolMargin, fill = color)
-                drawFieldorForceAdditionalItem(app, canvas, x0 + app.inOutSymbolMargin, 
+                drawFieldorForceAdditionalItem(app, canvas, 
+                        x0 + app.inOutSymbolMargin, 
                         y0 + app.inOutSymbolMargin, 
                         x1 - app.inOutSymbolMargin, 
                         y1 - app.inOutSymbolMargin, currentField.direction, 
@@ -640,7 +646,8 @@ def drawAskDataForField(app, canvas, fieldType):
     
     # Draw exit cross
     crossMargin = 5
-    canvas.create_line(app.askCX + app.askWidth // 2 - exitDimensions + crossMargin,
+    canvas.create_line(
+            app.askCX + app.askWidth // 2 - exitDimensions + crossMargin,
             app.askCY - app.askHeight // 2 + crossMargin,
             app.askCX + app.askWidth // 2 - crossMargin,
             app.askCY - app.askHeight // 2 + exitDimensions - crossMargin, 
@@ -749,7 +756,8 @@ def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor,
         return
     
     if not isinstance(direction, list):
-        drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, arrowColor)
+        drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, 
+                arrowColor)
 
 def convertDirectionToLorRFirstXD(direction):
     result = []
@@ -771,27 +779,33 @@ def convertDirectionToLorRFirstXD(direction):
 
 def determineBoundsAndDrawForceInOrOut(app, canvas, currentPC, direction, 
                                         arrowColor):
-    forceCircleCX = currentPC.cx - app.pointChargeRadius - app.pcToForceCircleMargin
-    forceCircleCY = currentPC.cy - app.pointChargeRadius - app.pcToForceCircleMargin
+    forceCircleCX = (currentPC.cx - app.pointChargeRadius - 
+            app.pcToForceCircleMargin)
+    forceCircleCY = (currentPC.cy - app.pointChargeRadius - 
+            app.pcToForceCircleMargin)
     if isValidForceCircleLocation(app, forceCircleCX, forceCircleCY):
         drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
                 direction, arrowColor)
         return
     
-    forceCircleCX = currentPC.cx + app.pointChargeRadius + app.pcToForceCircleMargin
+    forceCircleCX = (currentPC.cx + app.pointChargeRadius + 
+            app.pcToForceCircleMargin)
     if isValidForceCircleLocation(app, forceCircleCX, forceCircleCY):
         drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
                 direction, arrowColor)
         return
     
-    forceCircleCX = currentPC.cx - app.pointChargeRadius - app.pcToForceCircleMargin
-    forceCircleCY = currentPC.cy + app.pointChargeRadius + app.pcToForceCircleMargin
+    forceCircleCX = (currentPC.cx - app.pointChargeRadius - 
+            app.pcToForceCircleMargin)
+    forceCircleCY = (currentPC.cy + app.pointChargeRadius + 
+            app.pcToForceCircleMargin)
     if isValidForceCircleLocation(app, forceCircleCX, forceCircleCY):
         drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
                 direction, arrowColor)
         return
 
-    forceCircleCX = currentPC.cx + app.pointChargeRadius + app.pcToForceCircleMargin
+    forceCircleCX = (currentPC.cx + app.pointChargeRadius + 
+            app.pcToForceCircleMargin)
     drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
                 direction, arrowColor)
 
