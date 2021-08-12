@@ -313,38 +313,42 @@ def drawMenuBoard(app, canvas):
             menuCY - menuHeight // 2 + exitDimensions - crossMargin, 
             fill = 'white', width = 2)
 
-def drawDraggingMenu(app, canvas, graphicsCX, graphicsCY):
-    cartesianCX = Calculations.graphicsToCartesianX(app.menuPointCharge.cx, 
+def drawDraggingMenu(app, canvas, graphicsPCCX, graphicsPCCY,
+                        graphicsTextCX, graphicsTextCY):
+    cartesianPCCX = Calculations.graphicsToCartesianX(graphicsPCCX, 
             app.boardWidth)
-    cartesianCY = Calculations.graphicsToCartesianY(app.menuPointCharge.cy, 
+    cartesianPCCY = Calculations.graphicsToCartesianY(graphicsPCCY, 
             app.height)
-    canvas.create_text(graphicsCX, graphicsCY, 
-            text = f'({cartesianCX}, {cartesianCY})', font = 'Arial 12', 
+    canvas.create_text(graphicsTextCX, graphicsTextCY, 
+            text = f'({cartesianPCCX}, {cartesianPCCY})', font = 'Arial 12', 
             fill = 'gray')
 
-def calculateDraggingMenu(app, canvas):
+def calculateDraggingMenu(app, canvas, pcCX = None, pcCY = None):
+    if pcCX == None or pcCY == None:
+        pcCX = app.menuPointCharge.cx
+        pcCY = app.menuPointCharge.cy
     xMargin = 20
     yMargin = 10
     approxTextWidth = 15
-    textCX = (app.menuPointCharge.cx - app.pointChargeRadius - xMargin)
-    textCY = (app.menuPointCharge.cy - app.pointChargeRadius - yMargin)
+    textCX = (pcCX - app.pointChargeRadius - xMargin)
+    textCY = (pcCY - app.pointChargeRadius - yMargin)
     if isValidDraggingTextLocation(app, textCX, textCY, approxTextWidth):
-        drawDraggingMenu(app, canvas, textCX, textCY)
+        drawDraggingMenu(app, canvas, pcCX, pcCY, textCX, textCY)
         return
     
-    textCX = (app.menuPointCharge.cx + app.pointChargeRadius + xMargin)
+    textCX = (pcCX + app.pointChargeRadius + xMargin)
     if isValidDraggingTextLocation(app, textCX, textCY, approxTextWidth):
-        drawDraggingMenu(app, canvas, textCX, textCY)
+        drawDraggingMenu(app, canvas, pcCX, pcCY, textCX, textCY)
         return
     
-    textCX = (app.menuPointCharge.cx - app.pointChargeRadius - xMargin)
-    textCY = (app.menuPointCharge.cy + app.pointChargeRadius + yMargin)
+    textCX = (pcCX - app.pointChargeRadius - xMargin)
+    textCY = (pcCY + app.pointChargeRadius + yMargin)
     if isValidDraggingTextLocation(app, textCX, textCY, approxTextWidth):
-        drawDraggingMenu(app, canvas, textCX, textCY)
+        drawDraggingMenu(app, canvas, pcCX, pcCY, textCX, textCY)
         return
 
-    textCX = (app.menuPointCharge.cx + app.pointChargeRadius + xMargin)
-    drawDraggingMenu(app, canvas, textCX, textCY)
+    textCX = (pcCX + app.pointChargeRadius + xMargin)
+    drawDraggingMenu(app, canvas, pcCX, pcCY, textCX, textCY)
 
 def isValidDraggingTextLocation(app, cx, cy, approxTextWidth):
     if cx - app.pointChargeRadius - approxTextWidth // 2 < 0:
@@ -658,6 +662,7 @@ def drawDraggingObject(app, canvas):
             cy + app.pointChargeRadius, fill = app.pcColor)
         canvas.create_text(cx, cy,
                 text = '+', fill = 'white')
+        calculateDraggingMenu(app, canvas, cx, cy)
     elif app.draggingEField != None:
         x0 = app.draggingEField[0] - app.compassArrowLength // 2
         x1 = x0 + app.compassArrowLength
