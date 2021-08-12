@@ -7,18 +7,8 @@ import math
 import PointChargeClass
 
 def getOppositeDirection(directionIn):
-        if directionIn == 'R':
-            return 'L'
-        elif directionIn == 'L':
-            return 'R'
-        elif directionIn == 'U':
-            return 'D'
-        elif directionIn == 'D':
-            return 'U'
-        elif directionIn == 'I':
-            return 'O'
-        elif directionIn == 'O':
-            return 'I'
+    directions = {'L':'R', 'R':'L', 'U':'D', 'D':'U', 'I':'O', 'O':'I'}
+    return directions[directionIn]
 
 def getFieldLocationsXDimension(margin, width, height,
         fieldType, direction, spaceIntoLinesDivider):
@@ -122,42 +112,22 @@ def calculateOppositeBearingAngle(bearingIn):
     return result
 
 def calculateBForceDirection(velocityDirection, bFieldDirection):
-    if velocityDirection == 'U':
-        if bFieldDirection == 'L': return 'O'
-        elif bFieldDirection == 'R': return 'I'
-        elif bFieldDirection == 'O': return 'R'
-        elif bFieldDirection == 'I': return 'L'
-        else: return None
-    elif velocityDirection == 'D':
-        if bFieldDirection == 'L': return 'I'
-        elif bFieldDirection == 'R': return 'O'
-        elif bFieldDirection == 'O': return 'L'
-        elif bFieldDirection == 'I': return 'R'
-        else: return None
-    elif velocityDirection == 'L':
-        if bFieldDirection == 'U': return 'I'
-        elif bFieldDirection == 'D': return 'O'
-        elif bFieldDirection == 'O': return 'U'
-        elif bFieldDirection == 'I': return 'D'
-        else: return None
-    elif velocityDirection == 'R':
-        if bFieldDirection == 'U': return 'O'
-        elif bFieldDirection == 'D': return 'I'
-        elif bFieldDirection == 'O': return 'D'
-        elif bFieldDirection == 'I': return 'U'
-        else: return None
-    elif velocityDirection == 'O':
-        if bFieldDirection == 'L': return 'D'
-        elif bFieldDirection == 'R': return 'U'
-        elif bFieldDirection == 'U': return 'L'
-        elif bFieldDirection == 'D': return 'R'
-        else: return None
-    elif velocityDirection == 'I':
-        if bFieldDirection == 'L': return 'U'
-        elif bFieldDirection == 'R': return 'D'
-        elif bFieldDirection == 'U': return 'R'
-        elif bFieldDirection == 'D': return 'L'
-        else: return None
+    if velocityDirection == None:
+        return None
+
+    upVelocityDirection = {'L' : 'O', 'R' : 'I', 'O' : 'R', 'I' : 'L'}
+    downVelocityDirection = {'L' : 'I', 'R' : 'O', 'O' : 'L', 'I' : 'R'}
+    leftVelocityDirection = {'U' : 'I', 'D' : 'O', 'O' : 'U', 'I' : 'D'}
+    rightVelocityDirection = {'U' : 'O', 'D' : 'I', 'O' : 'D', 'I' : 'U'}
+    outVelocityDirection = {'L' : 'D', 'R' : 'U', 'U' : 'L', 'D' : 'R'}
+    inVelocityDirection = {'L' : 'U', 'R' : 'D', 'U' : 'R', 'D' : 'L'}
+
+    allVelocityDirections = {'U' : upVelocityDirection, 'D' : downVelocityDirection,
+            'L' : leftVelocityDirection, 'R' : rightVelocityDirection,
+            'O' : outVelocityDirection, 'I' : inVelocityDirection}
+
+    velocityDirectionList = allVelocityDirections[velocityDirection]
+    return velocityDirectionList.get(bFieldDirection, None)
 
 # Adapted from Mike Taylor's lectures
 # CITATION: "a" parameter for open() from 

@@ -338,7 +338,7 @@ def clickedInOptionPane(app, event):
         elif(app.interactionsBetweenPCOptionYs[0] <= event.y <= 
                 app.interactionsBetweenPCOptionYs[1]):
             app.showPCInteractions = not app.showPCInteractions
-            Calculations.writeToLogFile(f'Set interactions to {app.showPCInteractions}')
+            Calculations.writeToLogFile(f'Set interactions to {app.showPCInteractions}\n')
 
 def hasDuplicateFieldInList(app, currentField, fieldList):
     for field in fieldList:
