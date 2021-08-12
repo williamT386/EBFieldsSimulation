@@ -5,10 +5,13 @@ Created 7/6/2021
 
 import math
 
+# Returns the opposite direction of a given direction
 def getOppositeDirection(directionIn):
     directions = {'L':'R', 'R':'L', 'U':'D', 'D':'U', 'I':'O', 'O':'I'}
     return directions.get(directionIn, None)
 
+# Gets the field's drawing location for a given field direction that is 
+#  along the x dimension
 def getFieldLocationsXDimension(margin, width, height,
         fieldType, direction, spaceIntoLinesDivider):
     numRows = (height - 2 * margin) // spaceIntoLinesDivider
@@ -21,6 +24,8 @@ def getFieldLocationsXDimension(margin, width, height,
         result.append((0, y, width, y))
     return result
 
+# Gets the field's drawing location for a given field direction that is 
+#  along the y dimension
 def getFieldLocationsYDimension(margin, width, height,
         fieldType, direction, spaceIntoLinesDivider):
     numCols = (width - 2 * margin) // spaceIntoLinesDivider
@@ -33,6 +38,8 @@ def getFieldLocationsYDimension(margin, width, height,
         index += 2
     return result
 
+# Gets the field's drawing location for a given field direction that is 
+#  along the z dimension
 def getFieldLocationsZDimension(margin, width, height,
         fieldType, direction, spaceIntoLinesDivider):
     numRows = (height - 2 * margin) // spaceIntoLinesDivider
@@ -50,6 +57,7 @@ def getFieldLocationsZDimension(margin, width, height,
         startingIndex = 0 if startingIndex == 1 else 1
     return result
 
+# Gets the field's drawing location for a given field direction
 def getFieldLocations(width, height, fieldType, direction):
     margin = 15
     spaceIntoLinesDivider = 40
@@ -63,18 +71,23 @@ def getFieldLocations(width, height, fieldType, direction):
         return getFieldLocationsZDimension(margin, width, height, 
                 fieldType, direction, spaceIntoLinesDivider)
 
+# Converts cartesian x location to graphics x location
 def cartesianToGraphicsX(cartX, width):
     return cartX + width // 2
 
+# Converts cartesian y location to graphics y location
 def cartesianToGraphicsY(cartY, height):
     return -cartY + height // 2
 
+# Converts graphics x location to cartesian x location
 def graphicsToCartesianX(graphicsX, width):
     return graphicsX - width // 2
 
+# Converts graphics y location to cartesian y location
 def graphicsToCartesianY(graphicsY, height):
     return -(graphicsY - height // 2)
 
+# Calculates the bearing angle betwteen 2 locations
 def calculateBearingAngleBetween(xEffected, yEffected, xCause, yCause):
     result = []
     if xEffected < xCause:
@@ -101,6 +114,7 @@ def calculateBearingAngleBetween(xEffected, yEffected, xCause, yCause):
         result.append('U')
     return result
 
+# Returns the exact opposite bearing for a given bearing
 def calculateOppositeBearingAngle(bearingIn):
     result = []
     result.append(getOppositeDirection(bearingIn[0]))
@@ -110,6 +124,8 @@ def calculateOppositeBearingAngle(bearingIn):
     result.append(getOppositeDirection(bearingIn[2]))
     return result
 
+# Calculates the magnetic force direction given the velocity direction and 
+# BField direction
 def calculateBForceDirection(velocityDirection, bFieldDirection):
     if velocityDirection == None:
         return None
@@ -122,14 +138,14 @@ def calculateBForceDirection(velocityDirection, bFieldDirection):
     inVelocityDirection = {'L' : 'U', 'R' : 'D', 'U' : 'R', 'D' : 'L'}
 
     allVelocityDirections = {
-            'U' : upVelocityDirection, 
-            'D' : downVelocityDirection,
+            'U' : upVelocityDirection, 'D' : downVelocityDirection,
             'L' : leftVelocityDirection, 'R' : rightVelocityDirection,
             'O' : outVelocityDirection, 'I' : inVelocityDirection}
 
     velocityDirectionList = allVelocityDirections[velocityDirection]
     return velocityDirectionList.get(bFieldDirection, None)
 
+# Writes given text to the log file
 # Adapted from Mike Taylor's lectures
 # CITATION: "a" parameter for open() from 
 #  https://docs.python.org/3/library/functions.html#open
@@ -138,6 +154,7 @@ def writeToLogFile(contents):
     with open(path, "a") as f:
         f.write(contents)
 
+# Returns the text in help page for the given help page number
 # Adapted from Mike Taylor's lectures
 def readFromHelp(helpPageNum):
     path = 'Help' + str(helpPageNum) + '.txt'

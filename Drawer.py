@@ -6,6 +6,7 @@ Created 7/8/2021
 import math
 import EFieldClass, Calculations
 
+# Draws everything on the canvas
 def drawAll(app, canvas):
     drawCompass(app, canvas)
     drawUserOptions(app, canvas)
@@ -139,6 +140,7 @@ def drawPointChargeOption(app, canvas):
     canvas.create_text(app.checkboxCX + app.pointChargeRadius + 53, checkBoxCY, 
             text = 'Point Charge', font = 'Arial 15', anchor = 'center')
 
+# Draws the option for EField
 def drawEFieldOption(app, canvas):
     canvas.create_rectangle(app.optionsCX - app.optionsDrawingWidth // 2,
             app.eFieldsOptionYs[0], 
@@ -162,6 +164,7 @@ def drawEFieldOption(app, canvas):
     canvas.create_text(app.checkboxCX + 69, checkBoxCY, 
             text = 'Electric Field', font = 'Arial 15', anchor = 'center')
 
+# Draws the option for BField
 def drawBFieldOption(app, canvas):
     canvas.create_rectangle(app.optionsCX - app.optionsDrawingWidth // 2,
             app.bFieldsOptionYs[0], 
@@ -185,6 +188,7 @@ def drawBFieldOption(app, canvas):
     canvas.create_text(app.checkboxCX + 67, checkBoxCY, 
             text = 'Magnetic Field', font = 'Arial 15', anchor = 'center')
 
+# Draws the different electric force interactions between point charges
 def drawCheckboxInteractions(app, canvas):
     canvas.create_rectangle(app.optionsCX - app.optionsDrawingWidth // 2,
             app.interactionsBetweenPCOptionYs[0], 
@@ -227,6 +231,7 @@ def drawCheckboxInteractions(app, canvas):
     canvas.create_text(textCX, app.interactionsBetweenPCOptionYs[0] + 42, 
             text = 'charges', anchor = 'center')
 
+# Draws the reset button
 def drawResetButton(app, canvas):
     canvas.create_rectangle(app.resetButtonOptionXs[0],
             app.resetButtonOptionYs[0], 
@@ -237,6 +242,7 @@ def drawResetButton(app, canvas):
     canvas.create_text(cx, cy, text = 'Reset', 
             font = 'Arial 20', anchor = 'center')
 
+# Draws the help button
 def drawHelpButton(app, canvas):
     canvas.create_rectangle(app.helpButtonOptionXs[0],
             app.resetButtonOptionYs[0], 
@@ -247,6 +253,7 @@ def drawHelpButton(app, canvas):
     canvas.create_text(cx, cy, text = 'Help', 
             font = 'Arial 20', anchor = 'center')
 
+# Draws the color key
 def drawColorKey(app, canvas):
     yLine = app.resetButtonOptionYs[1] + 13
     canvas.create_line(app.boardWidth, yLine, app.width, yLine)
@@ -283,6 +290,7 @@ def drawColorKey(app, canvas):
             yColorRow, text = 'Point Charge', font = 'Arial 14', 
             anchor = 'w')
 
+# Draws the menu board
 def drawMenuBoard(app, canvas):
     width = app.displayMenuRectWidth
     height = app.displayMenuRectHeight
@@ -314,6 +322,7 @@ def drawMenuBoard(app, canvas):
             menuCY - menuHeight // 2 + exitDimensions - crossMargin, 
             fill = 'white', width = 2)
 
+# Draws the dragging menu coordinates
 def drawDraggingMenu(app, canvas, graphicsPCCX, graphicsPCCY,
                         graphicsTextCX, graphicsTextCY):
     cartesianPCCX = Calculations.graphicsToCartesianX(graphicsPCCX, 
@@ -324,6 +333,8 @@ def drawDraggingMenu(app, canvas, graphicsPCCX, graphicsPCCY,
             text = f'({cartesianPCCX}, {cartesianPCCY})', font = 'Arial 12', 
             fill = 'gray')
 
+# Determines the location for the dragging menu coordinates, 
+# and then calls drawDraggingMenu() to draw it
 def calculateDraggingMenu(app, canvas, pcCX = None, pcCY = None):
     if pcCX == None or pcCY == None:
         pcCX = app.menuPointCharge.cx
@@ -351,6 +362,7 @@ def calculateDraggingMenu(app, canvas, pcCX = None, pcCY = None):
     textCX = (pcCX + app.pointChargeRadius + xMargin)
     drawDraggingMenu(app, canvas, pcCX, pcCY, textCX, textCY)
 
+# Returns True if the given dragging text location is valid
 def isValidDraggingTextLocation(app, cx, cy, approxTextWidth):
     if cx - app.pointChargeRadius - approxTextWidth // 2 < 0:
         return False
@@ -400,6 +412,7 @@ def drawMenu(app, canvas):
     canvas.create_text(app.displayMenuRectCX, app.deleteButtonCY, 
             text = 'Delete', font = 'Arial 18', anchor = 'center')
 
+# Draws current values for the point charge in the menu 
 def drawMenuDisplayInformation(app, canvas, width, height, titleCX):
     graphicsX = Calculations.graphicsToCartesianX(app.menuPointCharge.cx, 
             app.boardWidth)
@@ -416,6 +429,7 @@ def drawMenuDisplayInformation(app, canvas, width, height, titleCX):
                     f'{app.menuPointCharge.velocityDirection}', 
             fill = 'white', font = 'Arial 17', anchor = 'w')
 
+# Draws the x input items in the menu
 def drawXMenu(app, canvas, width, height, titleCX, textboxCX,
             submitButtonWidth, submitButtonHeight, submitButtonCX):
     canvas.create_text(titleCX, app.checkboxXLocation[1] - 10, 
@@ -444,6 +458,7 @@ def drawXMenu(app, canvas, width, height, titleCX, textboxCX,
             (app.checkboxXLocation[1] + app.checkboxXLocation[3]) // 2,
             text = 'Submit', font = 'Arial 17')
 
+# Draws the y input items in the menu
 def drawYMenu(app, canvas, width, height, titleCX, textboxCX,
             submitButtonWidth, submitButtonHeight, submitButtonCX):
     canvas.create_text(titleCX, app.checkboxYLocation[1] - 10, 
@@ -472,6 +487,7 @@ def drawYMenu(app, canvas, width, height, titleCX, textboxCX,
             (app.checkboxYLocation[1] + app.checkboxYLocation[3]) // 2,
             text = 'Submit', font = 'Arial 17')
 
+# Draws the charge input items in the menu
 def drawChargeMenu(app, canvas, width, height, titleCX, textboxCX,
             submitButtonWidth, submitButtonHeight, submitButtonCX):
     canvas.create_text(titleCX, app.checkboxChargeLocation[1] - 10, 
@@ -502,6 +518,7 @@ def drawChargeMenu(app, canvas, width, height, titleCX, textboxCX,
             (app.checkboxChargeLocation[1] + app.checkboxChargeLocation[3])//2,
             text = 'Submit', font = 'Arial 17')
 
+# Draws the velocity direction input items in the menu
 def drawVelocityDirectionMenu(app, canvas, width, height, titleCX, textboxCX,
             submitButtonWidth, submitButtonHeight, submitButtonCX):
     canvas.create_text(titleCX, app.checkboxVelocityDirectionLocation[1] - 10,
@@ -561,6 +578,7 @@ def drawPointCharges(app, canvas):
         canvas.create_text(currentPC.cx, currentPC.cy,
                 text = currentPC.charge, fill = 'white')
 
+# Draws the velocity vector if possible
 def drawVelocity(app, canvas, currentPC):
     if currentPC.velocityDirection != None:
         if (currentPC.velocityDirection == 'I' or 
@@ -572,7 +590,8 @@ def drawVelocity(app, canvas, currentPC):
                     currentPC.velocityDirection, app.velocityArrowColor, 
                     app.velocityArrowLength)
 
-# only draw velocity in or out circle along x axis of point charge
+# Determines the boundaries and draws the velocity in or out circle
+# along a valid location in the x axis of where the point charge is located
 def determineBoundsAndDrawVelocityInOrOut(app, canvas, currentPC, 
                     direction, arrowColor):
     forceCircleCX = (currentPC.cx - app.pointChargeRadius - 
@@ -588,6 +607,7 @@ def determineBoundsAndDrawVelocityInOrOut(app, canvas, currentPC,
     drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
                 direction, arrowColor)
 
+# Draws a field or force arrow
 def drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, 
                                     color):
     angle = math.pi / 4
@@ -630,6 +650,7 @@ def drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction,
         canvas.create_line(xAArrow, y1Arrow, x1, y1, xBArrow, y1Arrow, 
                 fill = color, width = app.arrowThickness)
 
+# Draws all the fields for a given fieldType
 def drawFields(app, canvas, fieldType):
     fieldList = app.allEFields if fieldType == 'E' else app.allBFields
     color = app.eArrowColor if fieldType == 'E' else app.bArrowColor
@@ -654,6 +675,7 @@ def drawFields(app, canvas, fieldType):
                 drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, 
                         currentField.direction, color)
 
+# Draws the object being dragged
 def drawDraggingObject(app, canvas):
     if app.draggingPC != None:
         cx, cy = app.draggingPC
@@ -695,6 +717,7 @@ def drawDraggingObject(app, canvas):
                 checkBoxCY + app.optionShortLineArrowLength * math.cos(angle),
                 fill = app.bArrowColor, width = app.arrowThickness)
 
+# Draws the ask
 def drawAskDataForField(app, canvas, fieldType):
     canvas.create_rectangle(app.askCX - app.askWidth // 2,
             app.askCY - app.askHeight // 2,
@@ -743,6 +766,7 @@ def drawAskDataForField(app, canvas, fieldType):
     canvas.create_text(app.askCX + 75, app.askCY + 30, text = 'Submit', 
             font = 'Arial 20', anchor = 'center')
 
+# Draws a dot in the cartesian origin
 def drawOriginDot(app, canvas):
     graphicsX = Calculations.cartesianToGraphicsX(0, app.boardWidth)
     graphicsY = Calculations.cartesianToGraphicsY(0, app.height)
@@ -751,6 +775,7 @@ def drawOriginDot(app, canvas):
     canvas.create_text(graphicsX + 11, graphicsY + 8, text = '(0, 0)',
             font = 'Arial 8', fill = 'gray')
 
+# Draws a force arrow in a specific direction
 def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor,
                             arrowLength = None):
     if arrowLength == None:
@@ -825,24 +850,8 @@ def drawForceArrowInDirection(app, canvas, currentPC, direction, arrowColor,
         drawFieldorForceAdditionalItem(app, canvas, x0, y0, x1, y1, direction, 
                 arrowColor)
 
-def convertDirectionToLorRFirstXD(direction):
-    result = []
-    result.append(direction[0])
-    result.append(int(direction[1]))
-    if direction[2].isdigit():
-        result[1] = result[1]*10 + int(direction[2])
-        result.append(direction[3])
-    else:
-        result.append(direction[2])
-    
-    if result[0] == 'L' or result[0] == 'R':
-        return result
-    # swap the directions
-    result[0], result[2] = result[2], result[0]
-    # save angle as 90 minus the angle
-    result[1] = 90 - result[1]
-    return result
-
+# Determines the boundaries and draws the force in or out circle
+# along a valid location in the x axis of where the point charge is located
 def determineBoundsAndDrawForceInOrOut(app, canvas, currentPC, direction, 
                                         arrowColor):
     forceCircleCX = (currentPC.cx - app.pointChargeRadius - 
@@ -875,6 +884,7 @@ def determineBoundsAndDrawForceInOrOut(app, canvas, currentPC, direction,
     drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
                 direction, arrowColor)
 
+# Draws the force in or out circle
 def drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, direction, 
                             arrowColor):
     canvas.create_oval(forceCircleCX - app.forceCircleRadius,
@@ -896,6 +906,7 @@ def drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, direction,
         canvas.create_oval(forceCircleCX - 2, forceCircleCY - 2, 
                 forceCircleCX + 2, forceCircleCY + 2, fill = 'white')
 
+# Returns True if the currently force circle location is valid
 def isValidForceCircleLocation(app, cx, cy):
     if cx - app.forceCircleRadius < 0:
         return False
@@ -907,6 +918,7 @@ def isValidForceCircleLocation(app, cx, cy):
         return False
     return True
 
+# Draws the force for 1 given field
 def draw1FieldForce(app, canvas, currentPC, currentField):
     if isinstance(currentField, EFieldClass.EField):
         direction = currentField.direction
@@ -949,16 +961,19 @@ def determineBoundsAndDrawBFieldInOrOut(app, canvas, currentPC,
     drawForceCircleInOrOut(app, canvas, forceCircleCX, forceCircleCY, 
                 direction, arrowColor)
 
+# Draws all the electric forces
 def drawEFieldForces(app, canvas):
     for currentPC in app.allPointCharges:
         for currentEField in app.allEFields:
             draw1FieldForce(app, canvas, currentPC, currentEField)
 
+# Draws all the magnetic forces
 def drawBFieldForces(app, canvas):
     for currentPC in app.allPointCharges:
         for currentBField in app.allBFields:
             draw1FieldForce(app, canvas, currentPC, currentBField)
 
+# Draws all the interactions between the point charges
 def drawPCInteractions(app, canvas):
     if not app.showPCInteractions:
         return
@@ -975,12 +990,14 @@ def drawPCInteractions(app, canvas):
             drawForceArrowInDirection(app, canvas, pcEffected, bearing, 
                     app.pcEForceArrowColor, app.pcForceArrowLength)
 
+# Replaces each newline in a string with a space
 def removeNewline(s):
     while '\n' in s:
         index = s.find('\n')
         s = s[0:index] + ' ' + s[index+1:]
     return s
 
+# Draws everything in the help
 def drawHelp(app, canvas):
     if not app.isHelp:
         return

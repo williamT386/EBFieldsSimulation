@@ -68,6 +68,7 @@ def setConstants(app):
 
     setHelp(app)
 
+# Sets the constants for help
 def setHelp(app):
     leftSide = app.askCX - app.helpWidth // 2
     rightSide = app.askCX + app.helpWidth // 2
@@ -88,11 +89,13 @@ def setHelp(app):
     app.helpButtonsCYs = (topSide + buttonTopMargin, 
             topSide + app.helpButtonsHeight + buttonTopMargin + 25)
 
+# Sets the initial values for app
 def appStarted(app):
     Calculations.writeToLogFile("\nStart\n")
     setConstants(app)
     reset(app)
 
+# Resets all the app variables that will change
 def reset(app):
     app.allPointCharges = []
     app.allEFields = []
@@ -119,6 +122,7 @@ def reset(app):
     
     resetMenuInfo(app)
 
+# Resets all the information for the menu
 def resetMenuInfo(app):
     app.displayMenu = None
     app.displayDraggingMenu = False
@@ -220,6 +224,7 @@ def checkClickedMenuExit(app, event):
             return True
     return False
 
+# Check if wants to exit out of ask
 def checkClickedAskExit(app, event):
     exitDimensions = app.menuExitDimensions
     if (app.askCX + app.askWidth // 2 - exitDimensions <= event.x <=
@@ -229,10 +234,12 @@ def checkClickedAskExit(app, event):
         app.isAskDataForEField = False
         app.isAskDataForBField = False
 
+# Checks if a direction is valid and not 2D
 def isValidDirectionEntry(key):
     key = key.upper()
     return key in {'U', 'D', 'L', 'R', 'I', 'O'}
 
+# Checks if the new location for a point charge is valid
 def isValidPCRelocation(app, x, y, movingPC):
     if (0 > x - app.pointChargeRadius or 
             app.boardWidth <= x + app.pointChargeRadius):
@@ -250,6 +257,7 @@ def isValidPCRelocation(app, x, y, movingPC):
             return 'Error 2'
     return 'Works'
 
+# Checks if a string is parseable to int
 def isStringParseableToInt(s):
     if s == '-' or s == '+':
         return False
@@ -259,6 +267,8 @@ def isStringParseableToInt(s):
             return False
     return True
 
+# Saves how to modify x, y, charge, or velocityDirection
+#  for a point charge where necessary when typed
 def keyPressed(app, event):
     if app.isAskDataForEField or app.isAskDataForBField:
         if event.key == 'Enter':
@@ -344,6 +354,7 @@ def timerFired(app):
             app.errorMessage = None
             app.errorMessageTimer = None
 
+# Checks if clicked on any of the options except reset and help
 def clickedInOptionPane(app, event):
     if(app.optionsCX - app.optionsDrawingWidth // 2 <= event.x <= 
             app.optionsCX + app.optionsDrawingWidth // 2):
@@ -366,12 +377,14 @@ def clickedInOptionPane(app, event):
             Calculations.writeToLogFile(f'Set interactions to ' + 
                     f'{app.showPCInteractions}\n')
 
+#  Checks if a given field is already in a list
 def hasDuplicateFieldInList(app, currentField, fieldList):
     for field in fieldList:
         if currentField == field:
             return True
     return False
 
+# Returns the opposite field in a list given a field, if possible
 def getOppositeFieldInList(app, currentField, fieldList):
     for field in fieldList:
         if (currentField.direction == 
@@ -379,6 +392,8 @@ def getOppositeFieldInList(app, currentField, fieldList):
             return field
     return None
 
+# Modifies x, y, charge, or velocityDirection for a point charge 
+#  where necessary
 def shouldMenuPCSubmit(app):
     if app.menuSelected == 'x':
         cartesianX = Calculations.cartesianToGraphicsX(int(app.menuPCX), 
@@ -436,6 +451,8 @@ def shouldMenuPCSubmit(app):
         app.menuPCVelocityDirection = None
     app.menuSelected = None
 
+# Adds a BField to the list of all the BFields so that 
+# the in and out BFields are drawn last
 def addBFieldToBList(app, currentBField):
     for index in range(0, len(app.allBFields)):
         if (app.allBFields[index].direction != 'I' and
@@ -444,6 +461,7 @@ def addBFieldToBList(app, currentBField):
             return
     app.allBFields.append(currentBField)
 
+# Checks if should set the ask information
 def shouldAskSubmit(app):
     if app.askDataFieldDirection == None:
         setErrorMessage(app, 'Please enter a field direction.')
@@ -491,11 +509,14 @@ def shouldAskSubmit(app):
             app.errorMessageColor = 'Light green'
     app.askDataFieldDirection = None
 
+# Check if clicked on the submit button for ask
 def checkClickedAskSubmit(app, event):
     if (app.askSubmitXs[0] <= event.x <= app.askSubmitXs[1] and
             app.askSubmitYs[0] <= event.y <= app.askSubmitYs[1]):
         shouldAskSubmit(app)
 
+# Saves how to modify x, y, charge, or velocityDirection
+#  for a point charge where necessary when clicked in the menu
 def clickedInMenu(app, event):
     if app.displayDraggingMenu:
         return
@@ -577,12 +598,14 @@ def clickedInMenu(app, event):
                 setErrorMessage(app, 'Please enter a valid velocity direction.')
                 app.menuPCVelocityDirection = None
 
+# Checks if clicked in the help pane
 def clickedInHelp(app, event):
     return (app.askCX - app.helpWidth // 2 <= event.x <= 
             app.askCX + app.helpWidth // 2 and 
             app.askCY - app.helpHeight // 2 <= event.y <= 
             app.askCY + app.helpHeight // 2)
 
+# Checks if clicked on a specific button within the help pane
 def doHelp(app, event):
     # clicked exit
     if (app.askCX + app.helpWidth // 2 - app.menuExitDimensions <= event.x <=
@@ -602,6 +625,7 @@ def doHelp(app, event):
                 app.helpButtonsCYs[1] + app.helpButtonsHeight // 2):
             app.helpPage = 2 if app.helpPage == 3 else 3
 
+# Modifies game behavior in expected manner when the mouse is pressed down
 def mousePressed(app, event):
     if (app.resetButtonOptionYs[0] <= event.y <= 
             app.resetButtonOptionYs[1]):
@@ -646,6 +670,7 @@ def mousePressed(app, event):
             app.clickedCurrentPC = True
             return
 
+# Modifies game behavior in expected manner when the mouse is dragged
 def mouseDragged(app, event):
     if app.isAskDataForEField or app.isAskDataForBField:
         return
@@ -665,8 +690,8 @@ def mouseDragged(app, event):
     elif app.draggingBFieldOption:
         app.draggingBField = (event.x, event.y)
 
+# If allowed location, adds a point charge to the list of point charges
 def addPC(app, event):
-    # released in option pane
     if (event.x + app.pointChargeRadius >= app.boardWidth or 
             event.x - app.pointChargeRadius <= 0 or 
             event.y - app.pointChargeRadius <= 0 or
@@ -699,6 +724,7 @@ def addPC(app, event):
             f'{Calculations.graphicsToCartesianX(event.x, app.boardWidth)}, ' + 
             f'{Calculations.graphicsToCartesianY(event.y, app.height)})\n')
 
+# Modifies game behavior in expected manner when the mouse is released
 def mouseReleased(app, event):
     app.displayDraggingMenu = False
     if (app.menuPointCharge != None and app.displayMenu != None and 
