@@ -13,11 +13,11 @@ def setConstants(app):
     app.displayMenuRectWidth = 250
     app.displayMenuRectHeight = 320
     app.menuExitDimensions = 20
-    app.defaultWidth = app.width
-    app.defaultHeight = app.height
+    app.gameWidth = app.width
+    app.gameHeight = app.height
     app.userOptionsWidth = app.height // 4
-    app.boardWidth = app.width - app.userOptionsWidth
-    app.optionsCX = app.width - app.userOptionsWidth // 2
+    app.boardWidth = app.gameWidth - app.userOptionsWidth
+    app.optionsCX = app.gameWidth - app.userOptionsWidth // 2
     app.optionsDrawingWidth = int(app.userOptionsWidth * 0.8)
 
     app.pointChargeOptionYs = (110, 150)

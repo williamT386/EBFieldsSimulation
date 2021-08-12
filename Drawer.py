@@ -86,10 +86,10 @@ def drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY,
 # Draws the compass
 def drawCompass(app, canvas):
     dy = 170
-    canvas.create_line(app.boardWidth, app.height - dy,
-            app.width, app.height - dy)
-    allArrowsCX = app.width - app.userOptionsWidth // 2
-    allArrowsCY = app.height - dy // 2
+    canvas.create_line(app.boardWidth, app.gameHeight - dy,
+            app.gameWidth, app.gameHeight - dy)
+    allArrowsCX = app.gameWidth - app.userOptionsWidth // 2
+    allArrowsCY = app.gameHeight - dy // 2
     compassArrowLength = app.userOptionsWidth // 2 - 25
     drawCompassArrow(app, canvas, compassArrowLength, allArrowsCX, allArrowsCY, 
             (0, -1), 'U')
@@ -102,7 +102,7 @@ def drawCompass(app, canvas):
 
 # Draws the options
 def drawUserOptions(app, canvas):
-    canvas.create_line(app.boardWidth, 0, app.boardWidth, app.height)
+    canvas.create_line(app.boardWidth, 0, app.boardWidth, app.gameHeight)
     
     canvas.create_text(app.optionsCX, 25, text = 'EBFields', 
             font = 'Arial 25 bold', anchor = 'center')
@@ -113,7 +113,7 @@ def drawUserOptions(app, canvas):
             font = 'Arial 20', anchor = 'center')
     
     lineY = (85 + 10 + app.pointChargeOptionYs[0]) // 2
-    canvas.create_line(app.boardWidth, lineY, app.width, lineY)
+    canvas.create_line(app.boardWidth, lineY, app.gameWidth, lineY)
 
     drawPointChargeOption(app, canvas)
     drawEFieldOption(app, canvas)
@@ -256,7 +256,7 @@ def drawHelpButton(app, canvas):
 # Draws the color key
 def drawColorKey(app, canvas):
     yLine = app.resetButtonOptionYs[1] + 13
-    canvas.create_line(app.boardWidth, yLine, app.width, yLine)
+    canvas.create_line(app.boardWidth, yLine, app.gameWidth, yLine)
     yTitle = yLine + 15
     canvas.create_text(app.optionsCX, yTitle, text = 'Color Key', 
             font = 'Arial 16', anchor = 'center')
@@ -271,7 +271,7 @@ def drawColorKey(app, canvas):
     yColorRow = yTitle + 20
     dyBottom = 170
     marginBottom = 10
-    yBottom = app.height - dyBottom - marginBottom - 15
+    yBottom = app.gameHeight - dyBottom - marginBottom - 15
     dy = (yBottom - yColorRow) // len(colorList) + 2
     colorRowRectDimension = 6
 
@@ -328,7 +328,7 @@ def drawDraggingMenu(app, canvas, graphicsPCCX, graphicsPCCY,
     cartesianPCCX = Calculations.graphicsToCartesianX(graphicsPCCX, 
             app.boardWidth)
     cartesianPCCY = Calculations.graphicsToCartesianY(graphicsPCCY, 
-            app.height)
+            app.gameHeight)
     canvas.create_text(graphicsTextCX, graphicsTextCY, 
             text = f'({cartesianPCCX}, {cartesianPCCY})', font = 'Arial 12', 
             fill = 'gray')
@@ -370,7 +370,7 @@ def isValidDraggingTextLocation(app, cx, cy, approxTextWidth):
         return False
     if cy - app.pointChargeRadius < 0:
         return False
-    if cy + app.pointChargeRadius >= app.height:
+    if cy + app.pointChargeRadius >= app.gameHeight:
         return False
     return True
 
@@ -417,7 +417,7 @@ def drawMenuDisplayInformation(app, canvas, width, height, titleCX):
     graphicsX = Calculations.graphicsToCartesianX(app.menuPointCharge.cx, 
             app.boardWidth)
     graphicsY = Calculations.graphicsToCartesianY(app.menuPointCharge.cy, 
-            app.height)
+            app.gameHeight)
     canvas.create_text(titleCX, app.checkboxXLocation[1] - 75,
             text = f'Position: ({graphicsX}, {graphicsY})', fill = 'white', 
             font = 'Arial 17', anchor = 'w')
@@ -554,8 +554,8 @@ def drawVelocityDirectionMenu(app, canvas, width, height, titleCX, textboxCX,
 # Draws the error message if possible
 def drawErrorMessage(app, canvas):
     if app.errorMessage != None:
-        textAndRectCX = app.width // 2
-        textAndRectCY = app.height - 100
+        textAndRectCX = app.gameWidth // 2
+        textAndRectCY = app.gameHeight - 100
         textAndRectHeight = 30
         canvas.create_rectangle((textAndRectCX - 
                 app.errorMessageTextAndRectWidth // 2), 
@@ -656,7 +656,8 @@ def drawFields(app, canvas, fieldType):
     color = app.eArrowColor if fieldType == 'E' else app.bArrowColor
     for currentField in fieldList:
         currentListOfLocations = Calculations.getFieldLocations(
-                app.boardWidth, app.height, fieldType, currentField.direction)
+                app.boardWidth, app.gameHeight, fieldType, 
+                currentField.direction)
         for (x0, y0, x1, y1) in currentListOfLocations:
             if currentField.direction == 'I' or currentField.direction == 'O':
                 canvas.create_oval(x0 + app.inOutSymbolMargin, 
@@ -769,7 +770,7 @@ def drawAskDataForField(app, canvas, fieldType):
 # Draws a dot in the cartesian origin
 def drawOriginDot(app, canvas):
     graphicsX = Calculations.cartesianToGraphicsX(0, app.boardWidth)
-    graphicsY = Calculations.cartesianToGraphicsY(0, app.height)
+    graphicsY = Calculations.cartesianToGraphicsY(0, app.gameHeight)
     canvas.create_oval(graphicsX - 2, graphicsY - 2, 
             graphicsX + 2, graphicsY + 2, fill = 'gray', width = 0)
     canvas.create_text(graphicsX + 11, graphicsY + 8, text = '(0, 0)',
@@ -914,7 +915,7 @@ def isValidForceCircleLocation(app, cx, cy):
         return False
     if cy - app.forceCircleRadius < 0:
         return False
-    if cy + app.forceCircleRadius >= app.height:
+    if cy + app.forceCircleRadius >= app.gameHeight:
         return False
     return True
 
