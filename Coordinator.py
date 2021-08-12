@@ -163,14 +163,10 @@ def setDisplayMenuInfo(app):
             app.displayMenuRectCX + app.deleteButtonWidth // 2,
             app.deleteButtonCY + app.deleteButtonHeight // 2)
 
-# Returns the location to set the menu
-def getMenuLocations(app):
-    return Drawer.getMenuLocations(app)
-
 # Check if clicked outside the menu
 def checkClickedOutOfMenu(app, event):
     if app.displayMenu != None:
-        menuCX, menuCY, menuWidth, menuHeight = getMenuLocations(app)
+        menuCX, menuCY, menuWidth, menuHeight = Drawer.getMenuLocations(app)
         if not (menuCX - menuWidth // 2 <= event.x <= menuCX + menuWidth // 2 and 
                 menuCY - menuHeight // 2 <= event.y <= menuCY + menuHeight // 2):
             app.displayMenu = None
@@ -181,7 +177,7 @@ def checkClickedOutOfMenu(app, event):
 # Check if clicked the exit of the menu
 def checkClickedMenuExit(app, event):
     if app.displayMenu != None:
-        menuCX, menuCY, menuWidth, menuHeight = getMenuLocations(app)
+        menuCX, menuCY, menuWidth, menuHeight = Drawer.getMenuLocations(app)
         exitDimensions = app.menuExitDimensions
         if (menuCX + menuWidth // 2 - exitDimensions <= event.x <= menuCX + menuWidth // 2 and 
                 menuCY - menuHeight // 2 <= event.y <= menuCY - menuHeight // 2 + exitDimensions):

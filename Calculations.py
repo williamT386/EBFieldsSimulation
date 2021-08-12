@@ -8,7 +8,7 @@ import PointChargeClass
 
 def getOppositeDirection(directionIn):
     directions = {'L':'R', 'R':'L', 'U':'D', 'D':'U', 'I':'O', 'O':'I'}
-    return directions[directionIn]
+    return directions.get(directionIn, None)
 
 def getFieldLocationsXDimension(margin, width, height,
         fieldType, direction, spaceIntoLinesDivider):
