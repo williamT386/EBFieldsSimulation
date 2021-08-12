@@ -3,9 +3,8 @@ William Tang (wyt)
 Created 7/8/2021
 '''
 
-from cmu_112_graphics import *
 import math
-import PointChargeClass, EFieldClass, BFieldClass, Calculations
+import EFieldClass, Calculations
 
 def drawAll(app, canvas):
     drawCompass(app, canvas)
@@ -119,6 +118,7 @@ def drawUserOptions(app, canvas):
     drawBFieldOption(app, canvas)
     drawCheckboxInteractions(app, canvas)
     drawResetButton(app, canvas)
+    drawHelpButton(app, canvas)
 
     drawColorKey(app, canvas)
 
@@ -227,12 +227,23 @@ def drawCheckboxInteractions(app, canvas):
             text = 'charges', anchor = 'center')
 
 def drawResetButton(app, canvas):
-    canvas.create_rectangle(app.optionsCX - app.optionsSurroundingRectWidth//2,
+    canvas.create_rectangle(app.resetButtonOptionXs[0],
             app.resetButtonOptionYs[0], 
-            app.optionsCX + app.optionsSurroundingRectWidth // 2,
+            app.resetButtonOptionXs[1],
             app.resetButtonOptionYs[1], width = 3)
+    cx = (app.resetButtonOptionXs[0] + app.resetButtonOptionXs[1]) // 2
     cy = (app.resetButtonOptionYs[0] + app.resetButtonOptionYs[1]) // 2
-    canvas.create_text(app.optionsCX, cy, text = 'Reset', 
+    canvas.create_text(cx, cy, text = 'Reset', 
+            font = 'Arial 20', anchor = 'center')
+
+def drawHelpButton(app, canvas):
+    canvas.create_rectangle(app.helpButtonOptionXs[0],
+            app.resetButtonOptionYs[0], 
+            app.helpButtonOptionXs[1],
+            app.resetButtonOptionYs[1], width = 3)
+    cx = (app.helpButtonOptionXs[0]+app.helpButtonOptionXs[1]) // 2
+    cy = (app.resetButtonOptionYs[0] + app.resetButtonOptionYs[1]) // 2
+    canvas.create_text(cx, cy, text = 'Help', 
             font = 'Arial 20', anchor = 'center')
 
 def drawColorKey(app, canvas):

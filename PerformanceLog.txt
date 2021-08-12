@@ -1,0 +1,139 @@
+
+Start
+
+Start
+
+Start
+
+Start
+Reset
+Added point charge #1 at (175, 46)
+Reset
+Added point charge #1 at (181, 7)
+Reset
+Added point charge #1 at (176, 103)
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+Added point charge #1 at (129, -1)
+Reset
+
+Start
+Added point charge #1 at (37, 125)
+Added point charge #2 at (206, 36)
+Added point charge #3 at (19, 20)
+Added point charge #4 at (-12, -11)
+Moved point charge #4 to (385, -69)
+Moved point charge #4 to (63, -68)
+Moved point charge #4 to (-139, -76)
+
+Start
+
+Start
+
+Start
+
+Start
+Added point charge #1 at (-132, 116)
+Added point charge #2 at (203, -51)
+Added point charge #3 at (-106, -57)
+Added point charge #4 at (-11, 238)
+
+Start
+Added point charge #1 at (127, 145)
+Added point charge #2 at (122, 29)
+Added point charge #3 at (33, 95)
+Added point charge #4 at (15, -121)
+Added point charge #5 at (14, 44)
+Reset
+
+Start
+Added point charge #1 at (32, 96)
+
+Start
+Added point charge #1 at (69, 79)
+
+Start
+
+Start
+
+Start
+Added point charge #1 at (40, 105)
+
+Start
+Added point charge #1 at (5, -4)
+Moved point charge #1 to (260, 148)
+Added point charge #2 at (-250, -179)
+Added point charge #3 at (199, -76)
+Added point charge #4 at (-89, 62)
+Added EField in R
+Set interactions to True
+Moved point charge #1 to (162, 43)
+Moved point charge #1 to (-71, -126)
+Moved point charge #1 to (39, -80)
+Moved point charge #1 to (109, 154)
+Moved point charge #1 to (-189, -65)
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+Added point charge #1 at (-248, 14)
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start
+
+Start

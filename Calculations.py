@@ -4,7 +4,6 @@ Created 7/6/2021
 '''
 
 import math
-import PointChargeClass
 
 def getOppositeDirection(directionIn):
     directions = {'L':'R', 'R':'L', 'U':'D', 'D':'U', 'I':'O', 'O':'I'}

@@ -4,8 +4,7 @@ Created 7/6/2021
 '''
 
 import PointChargeClass, EFieldClass, BFieldClass, Calculations, Drawer
-import math
-from cmu_112_graphics import *
+from cmu_112_graphics_altered import *
 
 # Sets the app constants
 def setConstants(app):
@@ -20,13 +19,17 @@ def setConstants(app):
     app.boardWidth = app.width - app.userOptionsWidth
     app.optionsCX = app.width - app.userOptionsWidth // 2
     app.optionsDrawingWidth = int(app.userOptionsWidth * 0.8)
-    app.optionsSurroundingRectWidth = app.optionsDrawingWidth // 2
 
     app.pointChargeOptionYs = (110, 150)
     app.eFieldsOptionYs = (160, 200)
     app.bFieldsOptionYs = (210, 250)
     app.interactionsBetweenPCOptionYs = (260, 315)
     app.resetButtonOptionYs = (325, 365)
+    marginBetweenResetAndHelp = 5
+    app.resetButtonOptionXs = (app.optionsCX - app.optionsDrawingWidth // 2, 
+        app.optionsCX - marginBetweenResetAndHelp)
+    app.helpButtonOptionXs = (app.optionsCX + marginBetweenResetAndHelp, 
+            app.optionsCX + app.optionsDrawingWidth // 2)
     app.showPCInteractions = False
     app.checkboxCX = app.optionsCX - app.optionsDrawingWidth // 3
     app.compassArrowLength = 30
@@ -315,8 +318,8 @@ def timerFired(app):
             app.errorMessageTimer = None
 
 def clickedInOptionPane(app, event):
-    if (app.optionsCX - app.optionsSurroundingRectWidth // 2 <= event.x <= 
-            app.optionsCX + app.optionsSurroundingRectWidth // 2 and 
+    if (app.resetButtonOptionXs[0] <= event.x <= 
+            app.resetButtonOptionXs[1] and 
             app.resetButtonOptionYs[0] <= event.y <= 
             app.resetButtonOptionYs[1]):
         Calculations.writeToLogFile(f'Reset\n')
