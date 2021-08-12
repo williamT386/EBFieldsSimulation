@@ -302,10 +302,59 @@ def drawMenuBoard(app, canvas):
             menuCY - menuHeight // 2 + exitDimensions - crossMargin, 
             fill = 'white', width = 2)
 
+def drawDraggingMenu(app, canvas, graphicsCX, graphicsCY):
+    cartesianCX = Calculations.graphicsToCartesianX(app.menuPointCharge.cx, 
+            app.boardWidth)
+    cartesianCY = Calculations.graphicsToCartesianY(app.menuPointCharge.cy, 
+            app.height)
+    canvas.create_text(graphicsCX, graphicsCY, 
+            text = f'({cartesianCX}, {cartesianCY})', font = 'Arial 12', 
+            fill = 'gray')
+
+def calculateDraggingMenu(app, canvas):
+    xMargin = 20
+    yMargin = 10
+    approxTextWidth = 15
+    textCX = (app.menuPointCharge.cx - app.pointChargeRadius - xMargin)
+    textCY = (app.menuPointCharge.cy - app.pointChargeRadius - yMargin)
+    if isValidDraggingTextLocation(app, textCX, textCY, approxTextWidth):
+        drawDraggingMenu(app, canvas, textCX, textCY)
+        return
+    
+    textCX = (app.menuPointCharge.cx + app.pointChargeRadius + xMargin)
+    if isValidDraggingTextLocation(app, textCX, textCY, approxTextWidth):
+        drawDraggingMenu(app, canvas, textCX, textCY)
+        return
+    
+    textCX = (app.menuPointCharge.cx - app.pointChargeRadius - xMargin)
+    textCY = (app.menuPointCharge.cy + app.pointChargeRadius + yMargin)
+    if isValidDraggingTextLocation(app, textCX, textCY, approxTextWidth):
+        drawDraggingMenu(app, canvas, textCX, textCY)
+        return
+
+    textCX = (app.menuPointCharge.cx + app.pointChargeRadius + xMargin)
+    drawDraggingMenu(app, canvas, textCX, textCY)
+
+def isValidDraggingTextLocation(app, cx, cy, approxTextWidth):
+    if cx - app.pointChargeRadius - approxTextWidth // 2 < 0:
+        return False
+    if cx + app.pointChargeRadius + approxTextWidth // 2 >= app.boardWidth:
+        return False
+    if cy - app.pointChargeRadius < 0:
+        return False
+    if cy + app.pointChargeRadius >= app.height:
+        return False
+    return True
+
 # Draws the menu if possible
 def drawMenu(app, canvas):
     if app.displayMenu == None:
         return
+
+    if app.displayDraggingMenu:
+        calculateDraggingMenu(app, canvas)
+        return
+
     width = app.displayMenuRectWidth
     height = app.displayMenuRectHeight
     drawMenuBoard(app, canvas)

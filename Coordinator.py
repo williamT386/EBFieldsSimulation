@@ -71,7 +71,6 @@ def reset(app):
     app.allBFields = []
     app.errorMessage = None
     app.errorMessageTimer = None
-    app.displayMenuHalf = False
 
     app.draggingPCOption = False
     app.draggingEFieldOption = False
@@ -92,6 +91,7 @@ def reset(app):
 
 def resetMenuInfo(app):
     app.displayMenu = None
+    app.displayDraggingMenu = False
     app.displayMenuRectCX = None
     app.displayMenuRectCY = None
 
@@ -473,6 +473,9 @@ def checkClickedAskSubmit(app, event):
         shouldAskSubmit(app)
 
 def clickedInMenu(app, event):
+    if app.displayDraggingMenu:
+        return
+
     app.clickedCurrentPC = False
     if checkClickedMenuExit(app, event):
         return
@@ -587,7 +590,7 @@ def mouseDragged(app, event):
                 'Works'):
             app.menuPointCharge.cx = event.x
             app.menuPointCharge.cy = event.y
-            app.displayMenuHalf = True
+            app.displayDraggingMenu = True
             setDisplayMenuInfo(app)
     elif app.draggingPCOption:
         app.draggingPC = (event.x, event.y)
@@ -631,6 +634,7 @@ def addPC(app, event):
             f'{Calculations.graphicsToCartesianY(event.y, app.height)})\n')
 
 def mouseReleased(app, event):
+    app.displayDraggingMenu = False
     if (app.menuPointCharge != None and app.displayMenu != None and 
             app.clickedCurrentPC):
         app.clickedCurrentPC = False
