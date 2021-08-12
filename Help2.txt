@@ -1,0 +1,24 @@
+After placing a point charge, you can drag it to a new 
+location. Fields cannot be changed after placement. You 
+can clear the screen with the Reset button.
+
+You can adjust information about a point charge already 
+placed by clicking on it. For x and y, you can only enter 
+integer values. For charge, you can only enter + or -. 
+For velocity direction, you can only enter U (up), 
+D (down), L (left), R (right), I (letter i for in), O (out).
+
+Point charges create a non-uniform electric field around 
+themselves, which create electric forces on other point 
+charges. To simulate this, click ‘Include electric fields 
+by point charges’ button on the right. This draws 
+electric force arrows caused by electric fields of point 
+charges as purple. The arrows for these are just lines, 
+not actual arrows, for simplicity.
+
+There are 3 shortcut keys. Control-P pauses/unpauses the 
+simulation, so if you are currently dragging something, 
+you can pause the simulation to access your cursor without
+moving the dragged element. Control-Q exits the app. 
+Clicking the exit button visually may not exit the app, 
+but you can force quit the app.

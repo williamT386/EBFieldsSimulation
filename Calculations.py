@@ -137,3 +137,9 @@ def writeToLogFile(contents):
     path = 'PerformanceLog.txt'
     with open(path, "a") as f:
         f.write(contents)
+
+# Adapted from Mike Taylor's lectures
+def readFromHelp(helpPageNum):
+    path = 'Help' + str(helpPageNum) + '.txt'
+    with open(path, "rt") as f:
+        return f.read()

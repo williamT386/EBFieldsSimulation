@@ -486,13 +486,11 @@ class App(object):
     @_safeMethod
     def _keyPressedWrapper(app, event):
         event = App.KeyEventWrapper(event)
-        if (event.key == 'control-s'):
-            app.saveSnapshot()
-        elif (event.key == 'control-p'):
+        # William Tang: removed saveSnapshot() and quit() option, 
+        # replaced shortcut key for hard exit with 'control-q'
+        if (event.key == 'control-p'):
             app._togglePaused()
             app._redrawAllWrapper()
-        # William Tang: removed quit() option and replaced shortcut key for
-        # hard exit with 'control-q'
         elif (event.key == 'control-q'): 
             os._exit(0) # hard exit avoids tkinter error messages
         elif (app._running and

@@ -47,7 +47,7 @@ def setConstants(app):
     app.pcEForceArrowColor = 'Purple'
     app.velocityArrowColor = 'Orange'
     
-    app.askCX = (app.width - app.optionsDrawingWidth) // 2
+    app.askCX = app.boardWidth // 2
     app.askCY = app.height // 2
     app.askWidth = 500
     app.askHeight = 250
@@ -62,6 +62,31 @@ def setConstants(app):
     app.deleteButtonHeight = 20
     app.pcToForceCircleMargin = 7
     app.forceCircleRadius = 7
+
+    app.helpWidth = 650
+    app.helpHeight = 600
+
+    setHelp(app)
+
+def setHelp(app):
+    leftSide = app.askCX - app.helpWidth // 2
+    rightSide = app.askCX + app.helpWidth // 2
+    topSide = app.askCY - app.helpHeight // 2
+    app.helpSeparatorLineX = leftSide + 150
+    app.helpTitleCX = (app.helpSeparatorLineX + rightSide) // 2
+    app.helpTitleCY = topSide + 25
+    app.helpTextX = app.helpSeparatorLineX + 40
+    app.helpTextYStart = topSide + 60
+    app.helpPage = 1
+    
+    app.buttonMessages = ['Instructions\npage 1', 'Instructions\npage 2', 
+            'Credits']
+    app.helpButtonsWidth = (app.helpSeparatorLineX - leftSide) * 0.7
+    app.helpButtonsHeight = 50
+    app.helpButtonsCX = (app.helpSeparatorLineX + leftSide) // 2
+    buttonTopMargin = 100
+    app.helpButtonsCYs = (topSide + buttonTopMargin, 
+            topSide + app.helpButtonsHeight + buttonTopMargin + 25)
 
 def appStarted(app):
     Calculations.writeToLogFile("\nStart\n")
@@ -83,6 +108,8 @@ def reset(app):
     app.draggingBField = None
     app.isAskDataForEField = False
     app.isAskDataForBField = False
+    app.isHelp = False
+    app.helpPageNum = 0
 
     app.askDataFieldDirection = None
 
@@ -318,13 +345,7 @@ def timerFired(app):
             app.errorMessageTimer = None
 
 def clickedInOptionPane(app, event):
-    if (app.resetButtonOptionXs[0] <= event.x <= 
-            app.resetButtonOptionXs[1] and 
-            app.resetButtonOptionYs[0] <= event.y <= 
-            app.resetButtonOptionYs[1]):
-        Calculations.writeToLogFile(f'Reset\n')
-        reset(app)
-    elif(app.optionsCX - app.optionsDrawingWidth // 2 <= event.x <= 
+    if(app.optionsCX - app.optionsDrawingWidth // 2 <= event.x <= 
             app.optionsCX + app.optionsDrawingWidth // 2):
         # point charge option
         if(app.pointChargeOptionYs[0] <= event.y <= 
@@ -556,7 +577,49 @@ def clickedInMenu(app, event):
                 setErrorMessage(app, 'Please enter a valid velocity direction.')
                 app.menuPCVelocityDirection = None
 
+def clickedInHelp(app, event):
+    return (app.askCX - app.helpWidth // 2 <= event.x <= 
+            app.askCX + app.helpWidth // 2 and 
+            app.askCY - app.helpHeight // 2 <= event.y <= 
+            app.askCY + app.helpHeight // 2)
+
+def doHelp(app, event):
+    # clicked exit
+    if (app.askCX + app.helpWidth // 2 - app.menuExitDimensions <= event.x <=
+            app.askCX + app.helpWidth // 2 and 
+            app.askCY - app.helpHeight // 2 <= event.y <=
+            app.askCY - app.helpHeight // 2 + app.menuExitDimensions):
+        app.isHelp = False
+    
+    if (app.helpButtonsCX - app.helpButtonsWidth // 2 <= event.x <=
+            app.helpButtonsCX + app.helpButtonsWidth // 2):
+        # clicked top button
+        if (app.helpButtonsCYs[0] - app.helpButtonsHeight // 2 <= event.y <=
+                app.helpButtonsCYs[0] + app.helpButtonsHeight // 2):
+            app.helpPage = 2 if app.helpPage == 1 else 1
+        # clicked bottom button
+        elif (app.helpButtonsCYs[1] - app.helpButtonsHeight // 2 <= event.y <=
+                app.helpButtonsCYs[1] + app.helpButtonsHeight // 2):
+            app.helpPage = 2 if app.helpPage == 3 else 3
+
 def mousePressed(app, event):
+    if (app.resetButtonOptionYs[0] <= event.y <= 
+            app.resetButtonOptionYs[1]):
+        if (app.resetButtonOptionXs[0] <= event.x <= 
+                app.resetButtonOptionXs[1]):
+            Calculations.writeToLogFile(f'Reset\n')
+            reset(app)
+            return
+        elif (app.helpButtonOptionXs[0] <= event.x <= 
+                app.helpButtonOptionXs[1]):
+            app.isHelp = not app.isHelp
+            return
+
+    if app.isHelp:
+        if clickedInHelp(app, event):
+            doHelp(app, event)
+        return
+
     if checkClickedOutOfMenu(app, event):
         clickedInMenu(app, event)
         return

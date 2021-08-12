@@ -1,0 +1,17 @@
+This program is written by William Tang (Monta Vista High 
+School, Class of 2022). His github account is williamT386.
+
+This program uses an altered version of 
+cmu_112_graphics.py version 0.9.0 written by Carnegie 
+Mellon University for 15-112-s21.
+
+This program is written as a gift for Mr. Birdsong from
+Monta Vista High School, whose AP Physics C course
+William took from 2020-2021. Hopefully, this program
+will have gained much more users since then.
+
+If you wish to contribute to this program, as of 8/12/2021, 
+this program's Github repository is accessible at 
+https://github.com/williamT386/EBFieldsSimulation.
+Please do not directly commit to the main branch; instead,
+create a pull request and I will look at your changes.

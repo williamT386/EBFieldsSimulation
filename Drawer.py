@@ -23,6 +23,7 @@ def drawAll(app, canvas):
         drawAskDataForField(app, canvas, 'Electric')
     elif app.isAskDataForBField:
         drawAskDataForField(app, canvas, 'Magnetic')
+    drawHelp(app, canvas)
     
     drawErrorMessage(app, canvas)
     drawDraggingObject(app, canvas)
@@ -973,3 +974,67 @@ def drawPCInteractions(app, canvas):
                 bearing = Calculations.calculateOppositeBearingAngle(bearing)
             drawForceArrowInDirection(app, canvas, pcEffected, bearing, 
                     app.pcEForceArrowColor, app.pcForceArrowLength)
+
+def removeNewline(s):
+    while '\n' in s:
+        index = s.find('\n')
+        s = s[0:index] + ' ' + s[index+1:]
+    return s
+
+def drawHelp(app, canvas):
+    if not app.isHelp:
+        return
+    
+    canvas.create_rectangle(app.askCX - app.helpWidth // 2,
+            app.askCY - app.helpHeight // 2, app.askCX + app.helpWidth // 2,
+            app.askCY + app.helpHeight // 2, fill = 'white smoke')
+    
+    # Draw exit 
+    exitDimensions = app.menuExitDimensions
+    canvas.create_rectangle(app.askCX + app.helpWidth // 2 - exitDimensions,
+            app.askCY - app.helpHeight // 2,
+            app.askCX + app.helpWidth // 2,
+            app.askCY - app.helpHeight // 2 + exitDimensions,
+            fill = 'red')
+    
+    # Draw exit cross
+    crossMargin = 5
+    canvas.create_line(
+            app.askCX + app.helpWidth // 2 - exitDimensions + crossMargin,
+            app.askCY - app.helpHeight // 2 + crossMargin,
+            app.askCX + app.helpWidth // 2 - crossMargin,
+            app.askCY - app.helpHeight // 2 + exitDimensions - crossMargin, 
+            fill = 'white', width = 2)
+    canvas.create_line(app.askCX + app.helpWidth // 2 - crossMargin,
+            app.askCY - app.helpHeight // 2 + crossMargin,
+            app.askCX + app.helpWidth // 2 - exitDimensions + crossMargin,
+            app.askCY - app.helpHeight // 2 + exitDimensions - crossMargin, 
+            fill = 'white', width = 2)
+    
+    topSide = app.askCY - app.helpHeight // 2
+    bottomSide = app.askCY + app.helpHeight // 2
+    canvas.create_line(app.helpSeparatorLineX, topSide, app.helpSeparatorLineX, 
+            bottomSide)
+    canvas.create_text(app.helpTitleCX, app.helpTitleCY,
+            text = removeNewline(app.buttonMessages[app.helpPage - 1]), 
+            font = 'Arial 20 bold',
+            anchor = 'n')
+    canvas.create_text(app.helpTextX, app.helpTextYStart, 
+            text = Calculations.readFromHelp(app.helpPage), font = 'Arial 16', 
+            anchor = 'nw')
+
+    # draw buttons
+    textToPrint = (app.buttonMessages[0:app.helpPage - 1] + 
+            app.buttonMessages[app.helpPage:])
+    canvas.create_rectangle(app.helpButtonsCX - app.helpButtonsWidth // 2,
+            app.helpButtonsCYs[0] - app.helpButtonsHeight // 2, 
+            app.helpButtonsCX + app.helpButtonsWidth // 2,
+            app.helpButtonsCYs[0] + app.helpButtonsHeight // 2, width = 3)
+    canvas.create_text(app.helpButtonsCX, app.helpButtonsCYs[0], 
+            text = textToPrint[0], font = 'Arial 16', anchor = 'center')
+    canvas.create_rectangle(app.helpButtonsCX - app.helpButtonsWidth // 2,
+            app.helpButtonsCYs[1] - app.helpButtonsHeight // 2, 
+            app.helpButtonsCX + app.helpButtonsWidth // 2,
+            app.helpButtonsCYs[1] + app.helpButtonsHeight // 2, width = 3)
+    canvas.create_text(app.helpButtonsCX, app.helpButtonsCYs[1], 
+            text = textToPrint[1], font = 'Arial 16', anchor = 'center')

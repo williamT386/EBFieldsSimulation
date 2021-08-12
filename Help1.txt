@@ -1,0 +1,24 @@
+This project simulates point charges, uniform electric 
+fields, and uniform magnetic fields. You can have multiple 
+of each. 
+
+Any arrows in the diagram are drawn to match the color key 
+on the right.
+
+Each electric field and magnetic field will have a specific 
+direction, since it is a vector, and that direction is 
+drawn as an arrow of the specified color in the Color Key.
+
+To create a point charge, electric field, or magnetic 
+field, drag its option from the right side of the screen 
+onto the drawing canvas in the middle. Point charges will 
+be created where it is dropped. If you drag a point charge 
+into an illegal spot (off the screen or on the right side 
+with the buttons or collides with another point charge), 
+it will not be created. 
+
+If you drag and drop an electric field or magnetic field, 
+it will then ask you for a direction for that field. You 
+can only enter U (up), D (down), L (left), R (right), 
+I (letter i for in), O (out). Look at the compass on the 
+bottom right for reference.
