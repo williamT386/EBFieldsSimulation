@@ -17,6 +17,7 @@ def setConstants(app):
     app.defaultWidth = app.width
     app.defaultHeight = app.height
     app.userOptionsWidth = app.height // 4
+    app.boardWidth = app.width - app.userOptionsWidth
     app.optionsCX = app.width - app.userOptionsWidth // 2
     app.optionsDrawingWidth = int(app.userOptionsWidth * 0.8)
     app.optionsSurroundingRectWidth = app.optionsDrawingWidth // 2
@@ -201,7 +202,7 @@ def isValidDirectionEntry(key):
 
 def isValidPCRelocation(app, x, y, movingPC):
     if (0 > x - app.pointChargeRadius or 
-            app.width - app.userOptionsWidth <= x + app.pointChargeRadius):
+            app.boardWidth <= x + app.pointChargeRadius):
         return 'Error 1'
     if (0 > y - app.pointChargeRadius or
             app.height <= y + app.pointChargeRadius):
@@ -334,7 +335,8 @@ def clickedInOptionPane(app, event):
         elif(app.interactionsBetweenPCOptionYs[0] <= event.y <= 
                 app.interactionsBetweenPCOptionYs[1]):
             app.showPCInteractions = not app.showPCInteractions
-            Calculations.writeToLogFile(f'Set interactions to {app.showPCInteractions}\n')
+            Calculations.writeToLogFile(f'Set interactions to ' + 
+                    f'{app.showPCInteractions}\n')
 
 def hasDuplicateFieldInList(app, currentField, fieldList):
     for field in fieldList:
@@ -352,15 +354,18 @@ def getOppositeFieldInList(app, currentField, fieldList):
 def shouldMenuPCSubmit(app):
     if app.menuSelected == 'x':
         cartesianX = Calculations.cartesianToGraphicsX(int(app.menuPCX), 
-                app.width - app.userOptionsWidth)
+                app.boardWidth)
         doesWork = isValidPCRelocation(app, cartesianX, app.menuPointCharge.cy, 
                 app.menuPointCharge)
         if doesWork == 'Works':
             app.menuPointCharge.cx = cartesianX
             tempIndex = app.allPointCharges.index(app.menuPointCharge)
-            Calculations.writeToLogFile(f'Moving point charge {tempIndex} to (' + 
-            f'{Calculations.graphicsToCartesianX(app.menuPointCharge.cx, app.width - app.userOptionsWidth)},' + 
-            f'{Calculations.graphicsToCartesianY(app.menuPointCharge.cy, app.height)})\n')
+            graphicsCX = Calculations.graphicsToCartesianX(
+                        app.menuPointCharge.cx, app.boardWidth)
+            graphicsCY = Calculations.graphicsToCartesianY(
+                        app.menuPointCharge.cy, app.height)
+            Calculations.writeToLogFile(f'Moving point charge {tempIndex} to ' + 
+                    f'({graphicsCX}, {graphicsCY})\n')
             app.menuPCX = None
             setDisplayMenuInfo(app)
         elif doesWork == 'Error 1':
@@ -376,9 +381,12 @@ def shouldMenuPCSubmit(app):
         if doesWork == 'Works':
             app.menuPointCharge.cy = cartesianY
             tempIndex = app.allPointCharges.index(app.menuPointCharge)
-            Calculations.writeToLogFile(f'Moving point charge {tempIndex} to (' + 
-            f'{Calculations.graphicsToCartesianX(app.menuPointCharge.cx, app.width - app.userOptionsWidth)},' + 
-            f'{Calculations.graphicsToCartesianY(app.menuPointCharge.cy, app.height)})\n')
+            graphicsCX = Calculations.graphicsToCartesianX(
+                        app.menuPointCharge.cx, app.boardWidth)
+            graphicsCY = Calculations.graphicsToCartesianY(
+                        app.menuPointCharge.cy, app.height)
+            Calculations.writeToLogFile(f'Moving point charge {tempIndex} to ' + 
+                    f'({graphicsCX}, {graphicsCY})\n')
             app.menuPCY = None
             setDisplayMenuInfo(app)
         elif doesWork == 'Error 1':
@@ -388,12 +396,14 @@ def shouldMenuPCSubmit(app):
     elif app.menuSelected == 'Charge':
         app.menuPointCharge.charge = app.menuPCCharge
         tempIndex = app.allPointCharges.index(app.menuPointCharge)
-        Calculations.writeToLogFile(f'Changed charge {tempIndex} to {app.menuPCCharge}\n')
+        Calculations.writeToLogFile(f'Changed charge {tempIndex} to ' + 
+                f'{app.menuPCCharge}\n')
         app.menuPCCharge = None
     elif app.menuSelected == 'Velocity Direction':
         app.menuPointCharge.velocityDirection = app.menuPCVelocityDirection.upper()
         tempIndex = app.allPointCharges.index(app.menuPointCharge)
-        Calculations.writeToLogFile(f'Changed velocity direction {tempIndex} to {app.menuPCVelocityDirection.upper()}\n')
+        Calculations.writeToLogFile(f'Changed velocity direction {tempIndex} to ' + 
+                f'{app.menuPCVelocityDirection.upper()}\n')
         app.menuPCVelocityDirection = None
     app.menuSelected = None
 
@@ -423,7 +433,8 @@ def shouldAskSubmit(app):
             app.errorMessageTextAndRectWidth = 640
         elif not hasDuplicateFieldInList(app, currentEField, app.allEFields):
             app.allEFields.append(currentEField)
-            Calculations.writeToLogFile(f'Added EField in {currentEField.direction}\n')
+            Calculations.writeToLogFile(f'Added EField in ' + 
+                    f'{currentEField.direction}\n')
         else:
             setErrorMessage(app, 'This field already exists, so ' + 
                     'it will not be added to the simulation.')
@@ -441,7 +452,8 @@ def shouldAskSubmit(app):
             app.errorMessageTextAndRectWidth = 640
         elif not hasDuplicateFieldInList(app, currentBField, app.allBFields):
             addBFieldToBList(app, currentBField)
-            Calculations.writeToLogFile(f'Added BField in {currentBField.direction}\n')
+            Calculations.writeToLogFile(f'Added BField in ' + 
+                    f'{currentBField.direction}\n')
         else:
             setErrorMessage(app, 'This field already exists, so ' + 
                     'it will not be added to the simulation.')
@@ -535,7 +547,7 @@ def mousePressed(app, event):
         return
 
     # clicked in option pane
-    if event.x + app.pointChargeRadius >= app.width - app.userOptionsWidth:
+    if event.x + app.pointChargeRadius >= app.boardWidth:
         clickedInOptionPane(app, event)
         return
 
@@ -577,7 +589,7 @@ def mouseDragged(app, event):
 
 def addPC(app, event):
     # released in option pane
-    if (event.x + app.pointChargeRadius >= app.width - app.userOptionsWidth or 
+    if (event.x + app.pointChargeRadius >= app.boardWidth or 
             event.x - app.pointChargeRadius <= 0 or 
             event.y - app.pointChargeRadius <= 0 or
             event.y + app.pointChargeRadius >= app.height):
@@ -605,11 +617,22 @@ def addPC(app, event):
     app.draggingPCOption = False
     app.draggingPC = None
     tempIndex = len(app.allPointCharges) - 1
-    Calculations.writeToLogFile(f'Adding point charge {tempIndex} at (' + 
-            f'{Calculations.graphicsToCartesianX(event.x, app.width - app.userOptionsWidth)},' + 
+    Calculations.writeToLogFile(f'Added point charge {tempIndex} at (' + 
+            f'{Calculations.graphicsToCartesianX(event.x, app.boardWidth)}, ' + 
             f'{Calculations.graphicsToCartesianY(event.y, app.height)})\n')
 
 def mouseReleased(app, event):
+    if (app.menuPointCharge != None and app.displayMenu != None and 
+            app.clickedCurrentPC):
+        app.clickedCurrentPC = False
+        tempIndex = app.allPointCharges.index(app.menuPointCharge)
+        graphicsCX = Calculations.graphicsToCartesianX(
+                app.menuPointCharge.cx, app.boardWidth)
+        graphicsCY = Calculations.graphicsToCartesianY(
+                app.menuPointCharge.cy, app.height)
+        Calculations.writeToLogFile(f'Moved point charge {tempIndex} to ' + 
+                f'({graphicsCX}, {graphicsCY})\n')
+
     if app.draggingPCOption:
         addPC(app, event)
     elif app.draggingEField != None:

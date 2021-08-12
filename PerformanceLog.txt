@@ -1,0 +1,24 @@
+
+Start
+Adding point charge 0 at (-15, 143)
+Moving point charge 0 to (-334, 36)
+Moving point charge 0 to (54, 198)
+Moving point charge 0 to (160, -44)
+Moving point charge 0 to (5, -44)
+Changed charge 0 to -
+Adding point charge 1 at (127, -47)
+Moving point charge 0 to (247, 60)
+Moving point charge 1 to (-213, 51)
+Moving point charge 0 to (17, -227)
+Moving point charge 1 to (301, 112)
+Moving point charge 0 to (-77, -34)
+Added EField in R
+Set interactions to True
+Added BField in U
+Added BField in I
+Set interactions to False
+Set interactions to True
+Set interactions to False
+Set interactions to True
+Set interactions to False
+Set interactions to True
