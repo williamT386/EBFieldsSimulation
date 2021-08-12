@@ -120,7 +120,7 @@ def setDisplayMenuInfo(app):
     radius = app.pointChargeRadius
     
     app.displayMenuRectCX = app.displayMenu.cx
-    if app.displayMenuRectCX + rectWidth // 2 >= app.width:
+    if app.displayMenuRectCX + rectWidth // 2 >= app.boardWidth:
         app.displayMenuRectCX = app.displayMenu.cx - rectWidth / 2 - margin
     elif app.displayMenuRectCX - rectWidth // 2 < 0:
         app.displayMenuRectCX = app.displayMenu.cx + rectWidth / 2 - margin
