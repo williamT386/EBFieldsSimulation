@@ -757,9 +757,9 @@ def drawAskDataForField(app, canvas, fieldType):
     canvas.create_line(app.askCX - 10, app.askCY + 40, 
             app.askCX - 10, app.askCY + 20, width = 2)
     if app.askDataFieldDirection != None:
-        canvas.create_text(app.askCX - 18, app.askCY + 30, 
-                text = app.askDataFieldDirection.upper(), 
-                font = 'Arial 18', anchor = 'center')
+        canvas.create_text(app.askCX - 13, app.askCY + 30, 
+                text = app.askDataFieldDirection, 
+                font = 'Arial 18', anchor = 'e')
     
     # draw submit button
     canvas.create_rectangle(app.askCX + 30, app.askCY + 10,

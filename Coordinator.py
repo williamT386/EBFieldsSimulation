@@ -272,15 +272,22 @@ def isStringParseableToInt(s):
 def keyPressed(app, event):
     if app.isAskDataForEField or app.isAskDataForBField:
         if event.key == 'Enter':
-            shouldAskSubmit(app)
+            if (app.askDataFieldDirection != None and 
+                    isValidDirectionEntry(app.askDataFieldDirection)):
+                shouldAskSubmit(app)
+            else:
+                setErrorMessage(app, 'Please enter a valid direction.')
+                app.askDataFieldDirection = None
         elif event.key == 'Delete':
-            if app.askDataFieldDirection != None:
+            if (app.askDataFieldDirection != None and 
+                    app.askDataFieldDirection != ''):
                 app.askDataFieldDirection = app.askDataFieldDirection[:-1]
-        elif isValidDirectionEntry(event.key):
-            app.askDataFieldDirection = event.key
-        else:
-            setErrorMessage(app, 'Please enter a valid direction.')
-            app.askDataFieldDirection = None
+        elif (len(event.key) == 1 and event.key.isalnum() or 
+                event.key == '+' or event.key == '-'):
+            if app.askDataFieldDirection == None:
+                app.askDataFieldDirection = ''
+            app.askDataFieldDirection += event.key
+        
     elif app.menuSelected == 'x':
         if event.key == 'Enter':
             if app.menuPCX != None and isStringParseableToInt(app.menuPCX):
@@ -329,7 +336,6 @@ def keyPressed(app, event):
             app.menuPCCharge += event.key
     elif app.menuSelected == 'Velocity Direction':
         if event.key == 'Enter':
-            #TODO: error checking direction for 2d velocity direction
             if (app.menuPCVelocityDirection != None and 
                     isValidDirectionEntry(app.menuPCVelocityDirection)):
                 shouldMenuPCSubmit(app)
@@ -469,7 +475,7 @@ def shouldAskSubmit(app):
 
     if app.isAskDataForEField:
         app.isAskDataForEField = False
-        currentEField = EFieldClass.EField(app.askDataFieldDirection)
+        currentEField = EFieldClass.EField(app.askDataFieldDirection.upper())
         oppositeField = getOppositeFieldInList(app, currentEField, 
                 app.allEFields)
         if oppositeField != None:
@@ -482,7 +488,7 @@ def shouldAskSubmit(app):
         elif not hasDuplicateFieldInList(app, currentEField, app.allEFields):
             app.allEFields.append(currentEField)
             Calculations.writeToLogFile(f'Added EField in ' + 
-                    f'{currentEField.direction}\n')
+                    f'{currentEField.direction.upper()}\n')
         else:
             setErrorMessage(app, 'This field already exists, so ' + 
                     'it will not be added to the simulation.')
